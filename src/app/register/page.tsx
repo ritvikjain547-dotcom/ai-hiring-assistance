@@ -1,11 +1,15 @@
 'use client';
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { registerUser } from "@/actions/auth";
 import { Brain, Mail, Lock, User, ArrowRight, Loader2, Briefcase, UserCheck } from "lucide-react";
 
-export default function RegisterPage() {
+function RegisterForm() {
+  const searchParams = useSearchParams();
+  const defaultEmail = searchParams.get("email") || "";
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<"RECRUITER" | "APPLICANT">("APPLICANT");
@@ -145,6 +149,7 @@ export default function RegisterPage() {
                 className="form-input"
                 placeholder="you@company.com"
                 required
+                defaultValue={defaultEmail}
                 style={{ paddingLeft: "38px" }}
               />
             </div>
@@ -227,5 +232,19 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="auth-page">
+        <div className="auth-card" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
+          <Loader2 className="spinner" size={24} />
+        </div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

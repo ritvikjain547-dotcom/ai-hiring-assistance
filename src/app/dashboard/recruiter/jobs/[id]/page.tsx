@@ -16,6 +16,7 @@ import {
   Download,
 } from "lucide-react";
 import { StatusUpdateButton } from "./StatusUpdateButton";
+import PhotoViewer from "@/components/PhotoViewer";
 
 export default async function RecruiterJobDetailPage({
   params,
@@ -158,9 +159,11 @@ export default async function RecruiterJobDetailPage({
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-                      <div className="avatar avatar-sm">
-                        {app.applicant.name.charAt(0).toUpperCase()}
-                      </div>
+                      <PhotoViewer
+                        src={app.applicant.profile?.profilePhotoUrl || ""}
+                        alt={app.applicant.name}
+                        fallbackInitial={app.applicant.name.charAt(0).toUpperCase()}
+                      />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>
                           {app.applicant.name}

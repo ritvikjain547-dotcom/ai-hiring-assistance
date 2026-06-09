@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 enum Role {
@@ -121,3 +121,15 @@ model Application {
   @@unique([jobId, applicantId])
   @@map("applications")
 }
+
+model OtpToken {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@map("otp_tokens")
+}
+

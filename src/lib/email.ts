@@ -195,7 +195,7 @@ export async function sendStatusUpdateEmail(
   let badgeClass = 'badge-welcome';
   let badgeText: string = status;
   let subject = `Application Status Update: ${jobTitle} at ${company}`;
-  let customGreeting = `Dear ${name},`;
+  const customGreeting = `Dear ${name},`;
   let bodyContent = '';
 
   switch (status) {
@@ -252,3 +252,38 @@ export async function sendStatusUpdateEmail(
   const html = getEmailWrapper(subject, content);
   return sendEmail({ to: email, subject, html });
 }
+
+export async function sendOTPEmail(email: string, otp: string) {
+  const subject = `Your Verification Code: ${otp}`;
+  const content = `
+    <span class="badge badge-welcome">OTP Verification</span>
+    <p>Hello,</p>
+    <p>You requested a verification code to sign in to the <strong>AI Hiring Portal</strong>.</p>
+    <p>Your OTP verification code is:</p>
+    <div style="font-size: 32px; font-weight: 800; letter-spacing: 4px; text-align: center; margin: 24px 0; color: #4f46e5;">
+      ${otp}
+    </div>
+    <p>This code is valid for 5 minutes. If you did not request this, please ignore this email.</p>
+    <p>Best regards,<br>The AI Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+export async function sendPasswordResetEmail(email: string, otp: string) {
+  const subject = `Reset Your Password - Verification Code: ${otp}`;
+  const content = `
+    <span class="badge badge-rejected" style="background-color: #fee2e2; color: #b91c1c;">Password Reset</span>
+    <p>Hello,</p>
+    <p>We received a request to reset the password for your <strong>AI Hiring Portal</strong> account.</p>
+    <p>Your password reset verification code is:</p>
+    <div style="font-size: 32px; font-weight: 800; letter-spacing: 4px; text-align: center; margin: 24px 0; color: #dc2626;">
+      ${otp}
+    </div>
+    <p>This code is valid for 5 minutes. If you did not request a password reset, please ignore this email or contact support if you have concerns.</p>
+    <p>Best regards,<br>The AI Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+

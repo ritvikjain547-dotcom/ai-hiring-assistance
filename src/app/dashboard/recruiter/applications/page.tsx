@@ -2,6 +2,7 @@ import { getRecruiterApplications } from "@/actions/applications";
 import Link from "next/link";
 import { Users, Download } from "lucide-react";
 import { StatusUpdateButton } from "../jobs/[id]/StatusUpdateButton";
+import PhotoViewer from "@/components/PhotoViewer";
 
 export default async function RecruiterApplicationsPage() {
   const applications = await getRecruiterApplications();
@@ -45,9 +46,11 @@ export default async function RecruiterApplicationsPage() {
                 <tr key={app.id}>
                   <td>
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-                      <div className="avatar avatar-sm">
-                        {app.applicant.name.charAt(0).toUpperCase()}
-                      </div>
+                      <PhotoViewer
+                        src={app.applicant.profile?.profilePhotoUrl || ""}
+                        alt={app.applicant.name}
+                        fallbackInitial={app.applicant.name.charAt(0).toUpperCase()}
+                      />
                       <div>
                         <div style={{ fontWeight: 600 }}>
                           {app.applicant.name}
