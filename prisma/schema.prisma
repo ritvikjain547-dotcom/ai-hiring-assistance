@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  RECRUITER
+  APPLICANT
+}
+
+enum LocationType {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  DRAFT
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile      Profile?
+  jobs         Job[]
+  applications Application[]
+
+  @@map("users")
+}
+
+model Profile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  phone           String?
+  location        String?
+  bio             String?  @db.Text
+  resumeUrl       String?
+  resumeFileName  String?
+  profilePhotoUrl String?
+  linkedinUrl     String?
+  githubUrl       String?
+  portfolioUrl    String?
+  skills          String?  @db.Text
+  experienceYears String?
+  education       String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Job {
+  id              String         @id @default(cuid())
+  recruiterId     String
+  title           String
+  company         String
+  description     String         @db.Text
+  location        String
+  locationType    LocationType   @default(REMOTE)
+  employmentType  EmploymentType @default(FULL_TIME)
+  experienceLevel String?
+  requiredSkills  String?        @db.Text
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String?        @default("USD")
+  status          JobStatus      @default(OPEN)
+  deadline        DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  recruiter    User          @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@map("jobs")
+}
+
+model Application {
+  id          String            @id @default(cuid())
+  jobId       String
+  applicantId String
+  coverLetter String?           @db.Text
+  resumeUrl   String?
+  status      ApplicationStatus @default(PENDING)
+  aiScore     Float?
+  aiAnalysis  String?           @db.Text
+  appliedAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  job       Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant User @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, applicantId])
+  @@map("applications")
+}

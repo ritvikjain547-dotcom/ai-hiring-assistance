@@ -1,0 +1,240 @@
+=====================================================
+  AI Hiring Assistance - Tech Stack (Detailed Usage)
+=====================================================
+
+
+1. NEXT.JS v16.2.7 (App Router, Turbopack)
+-------------------------------------------
+Role: Full-stack web framework built on top of React.
+
+Where it is used:
+  - App Router (src/app/) provides file-based routing for all pages:
+      • Landing page (src/app/page.tsx)
+      • Login & Register pages (src/app/login/, src/app/register/)
+      • Applicant dashboard, profile, jobs, applications (src/app/dashboard/applicant/)
+      • Recruiter dashboard, job management, applications (src/app/dashboard/recruiter/)
+  - Server Components render pages on the server for fast initial loads
+    (e.g., dashboard pages fetch data directly from DB without API calls).
+  - Server Actions (src/actions/) handle form submissions and mutations
+    directly on the server without needing separate API routes:
+      • auth.ts       — login, register
+      • profile.ts    — update applicant profile
+      • applications.ts — apply for jobs, update application status
+      • jobs.ts       — create/edit/delete job postings
+  - Layouts (src/app/dashboard/layout.tsx) provide shared navigation
+    and sidebar structure across dashboard pages.
+  - Turbopack is used as the dev bundler for fast hot-reloading.
+  - next.config.ts holds project-level configuration.
+
+
+2. REACT v19.2.4
+-------------------------------------------
+Role: UI component library powering the frontend.
+
+Where it is used:
+  - All .tsx files in src/app/ are React components.
+  - Client components (marked with 'use client') handle interactivity:
+      • ProfileForm.tsx    — profile editing form with state management
+      • ApplyForm.tsx      — job application form with file upload
+      • StatusUpdateButton.tsx — recruiter status change buttons
+  - React hooks used throughout:
+      • useState  — form state, loading indicators, error messages
+      • useRef    — file input references
+  - React 19 Server Components are used for data-fetching pages
+    (applicant dashboard, recruiter dashboard, job listings).
+
+
+3. TYPESCRIPT v5
+-------------------------------------------
+Role: Static type safety across the entire codebase.
+
+Where it is used:
+  - Every source file uses .ts or .tsx extensions.
+  - Prisma generates typed models (src/generated/prisma/) so all
+    database queries are fully type-checked.
+  - Interface definitions for component props:
+      • ProfileData interface in ProfileForm.tsx
+      • ApplyForm props (jobId, initialEmail, initialPhone)
+  - Server action return types ensure consistent { success } or { error } responses.
+  - tsconfig.json configures path aliases (e.g., @/lib/, @/actions/).
+  - next-env.d.ts provides Next.js-specific type declarations.
+
+
+4. LUCIDE REACT
+-------------------------------------------
+Role: Icon library providing consistent SVG icons.
+
+Where it is used:
+  - Dashboard stat cards (FileText, Clock, CheckCircle2, XCircle icons)
+  - Navigation sidebar (layout.tsx — menu icons for each section)
+  - Form fields (Phone, MapPin, Globe, GraduationCap, Briefcase icons
+    used as inline input icons in ProfileForm.tsx)
+  - Action buttons (Send, Loader2, Save, Upload icons)
+  - Job detail pages (MapPin, DollarSign, Calendar, Building2 icons)
+  - Status badges and feedback indicators throughout the UI.
+
+
+5. VANILLA CSS (Custom Design System)
+-------------------------------------------
+Role: All styling without any CSS framework.
+
+Where it is used:
+  - src/app/globals.css contains the complete design system:
+      • CSS custom properties (variables) for colors, spacing, typography,
+        radii, shadows — enabling consistent theming.
+      • Component classes: .card, .btn, .badge, .form-input, .alert,
+        .stat-card, .avatar, .file-upload, etc.
+      • Dark mode theme with glass-morphism effects.
+      • Responsive grid utilities (.grid-2, .grid-stats).
+      • Animations (fade-in, spinner rotation).
+  - All components reference these classes and CSS variables via
+    className props and inline style objects.
+
+
+6. PRISMA ORM v7.8.0
+-------------------------------------------
+Role: Database schema management, migrations, and type-safe queries.
+
+Where it is used:
+  - prisma/schema.prisma defines all database models:
+      • User (id, email, name, passwordHash, role)
+      • Profile (phone, location, bio, skills, resumeUrl, etc.)
+      • Job (title, company, description, salary, status, etc.)
+      • Application (jobId, applicantId, coverLetter, resumeUrl, status)
+      • Enums: Role, LocationType, EmploymentType, JobStatus, ApplicationStatus
+  - prisma.config.ts configures the MariaDB driver adapter.
+  - src/lib/prisma.ts initializes the PrismaClient singleton used
+    across all server-side code.
+  - src/generated/prisma/ contains auto-generated TypeScript types
+    matching the database schema.
+  - Used in every server action and server component for:
+      • prisma.user.findUnique()    — login, session lookups
+      • prisma.job.findMany()       — job listings
+      • prisma.application.create() — submitting applications
+      • prisma.profile.upsert()     — creating/updating profiles
+      • prisma.application.count()  — dashboard statistics
+  - prisma/seed.ts populates the database with sample data
+    (test recruiter, applicants, jobs, and applications).
+
+
+7. MYSQL 8.0 (via MariaDB Adapter)
+-------------------------------------------
+Role: Relational database engine storing all application data.
+
+Where it is used:
+  - Configured in .env via DATABASE_URL="mysql://root@localhost:3306/ai_hiring_db"
+  - The @prisma/adapter-mariadb package bridges Prisma to MySQL.
+  - mysql_data/ directory contains the local MySQL data files
+    (InnoDB tablespaces, binlogs, system tables).
+  - Database tables (mapped in schema.prisma):
+      • users         — stores recruiter and applicant accounts
+      • profiles      — stores extended applicant profile data
+      • jobs          — stores job postings created by recruiters
+      • applications  — stores job applications with status tracking
+  - mysqld.exe is started pointing to the local mysql_data/ directory.
+
+
+8. SUPABASE STORAGE (@supabase/supabase-js)
+-------------------------------------------
+Role: Cloud file storage for resume uploads (with local disk fallback).
+
+Where it is used:
+  - src/lib/supabase.ts initializes the Supabase client if
+    NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set;
+    otherwise exports null to trigger fallback.
+  - src/actions/applications.ts — when an applicant submits a job
+    application with a resume:
+      • If Supabase is configured: uploads file to the 'resumes' bucket
+        and stores the public URL in the application record.
+      • If not configured: writes the file to public/uploads/resumes/
+        on local disk.
+  - .env contains placeholder variables for Supabase credentials.
+
+
+9. NEXTAUTH.JS v5.0.0-beta.31 (Auth.js)
+-------------------------------------------
+Role: Authentication and session management.
+
+Where it is used:
+  - src/lib/auth.ts configures NextAuth with:
+      • Credentials provider (email + password login)
+      • JWT session strategy
+      • Custom callbacks to attach user role and ID to the session
+  - src/proxy.ts (middleware) protects routes:
+      • Redirects unauthenticated users away from /dashboard/*
+      • Redirects authenticated users away from /login and /register
+      • Enforces role-based access (applicants vs recruiters)
+  - auth() function is called in every server action to verify
+    the current user's identity before performing any operation.
+  - Login page (src/app/login/) and register page (src/app/register/)
+    use the signIn() function from NextAuth.
+  - Session data (user name, email, role) is used in layouts and
+    dashboards to personalize the UI.
+
+
+10. BCRYPT.JS v3.0.3
+-------------------------------------------
+Role: Secure password hashing and verification.
+
+Where it is used:
+  - src/actions/auth.ts:
+      • registerUser() — hashes the password with bcrypt.hash(password, 12)
+        before storing it in the database.
+      • loginUser() — verifies the entered password against the stored
+        hash using bcrypt.compare(password, user.passwordHash).
+  - src/lib/auth.ts — the credentials provider authorize() function
+    uses bcrypt.compare() to validate login attempts.
+  - prisma/seed.ts — hashes sample passwords for test accounts
+    (recruiter@hireai.com, applicant@hireai.com, maya@hireai.com).
+
+
+11. ZOD v4.4.3
+-------------------------------------------
+Role: Runtime schema validation for user inputs.
+
+Where it is used:
+  - src/actions/auth.ts — validates registration form data:
+      • Email format validation
+      • Password minimum length enforcement
+      • Name required field validation
+      • Role enum validation (RECRUITER or APPLICANT)
+  - Ensures server-side validation even if client-side checks are bypassed.
+
+
+12. ESLINT v9
+-------------------------------------------
+Role: Code linting and quality enforcement.
+
+Where it is used:
+  - eslint.config.mjs contains the ESLint configuration.
+  - Uses eslint-config-next for Next.js-specific linting rules.
+  - Available via "npm run lint" script in package.json.
+
+
+13. TSX
+-------------------------------------------
+Role: TypeScript execution engine for running .ts scripts directly.
+
+Where it is used:
+  - prisma/seed.ts is executed via "npx tsx prisma/seed.ts"
+    (configured in package.json under prisma.seed).
+  - Allows running TypeScript database seeding scripts without
+    a separate compilation step.
+
+
+14. DOTENV
+-------------------------------------------
+Role: Loading environment variables from .env files.
+
+Where it is used:
+  - prisma/seed.ts imports "dotenv/config" at the top to load
+    DATABASE_URL when running the seed script outside of Next.js.
+  - Next.js automatically loads .env for the app itself.
+  - .env file contains:
+      • DATABASE_URL      — MySQL connection string
+      • AUTH_SECRET        — NextAuth encryption key
+      • AUTH_URL           — NextAuth callback base URL
+      • NEXTAUTH_URL       — NextAuth public URL
+      • NEXT_PUBLIC_APP_URL — Public app URL
+      • NEXT_PUBLIC_SUPABASE_URL    — Supabase project URL
+      • SUPABASE_SERVICE_ROLE_KEY   — Supabase admin key
