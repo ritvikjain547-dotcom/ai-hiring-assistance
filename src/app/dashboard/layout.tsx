@@ -23,11 +23,7 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id },
-    select: { profilePhotoUrl: true },
-  });
-  const profilePhotoUrl = profile?.profilePhotoUrl;
+
 
   const role = (session.user as any).role;
   const isRecruiter = role === "RECRUITER";
@@ -102,15 +98,7 @@ export default async function DashboardLayout({
               {role}
             </span>
             <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
-              {profilePhotoUrl ? (
-                <img
-                  src={profilePhotoUrl}
-                  alt={session.user.name || "User"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                session.user.name?.charAt(0).toUpperCase() || "U"
-              )}
+              {session.user.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>
               {session.user.name}
@@ -160,15 +148,7 @@ export default async function DashboardLayout({
             }}
           >
             <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
-              {profilePhotoUrl ? (
-                <img
-                  src={profilePhotoUrl}
-                  alt={session.user.name || "User"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                session.user.name?.charAt(0).toUpperCase() || "U"
-              )}
+              {session.user.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div

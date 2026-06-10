@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { updateProfile, uploadProfilePhoto } from "@/actions/profile";
+import { updateProfile } from "@/actions/profile";
 import {
   User,
   Loader2,
@@ -12,7 +12,6 @@ import {
   GraduationCap,
   Briefcase,
   Save,
-  Camera,
 } from "lucide-react";
 
 const Github = ({ size = 20, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) => (
@@ -63,7 +62,7 @@ interface ProfileData {
   skills: string | null;
   experienceYears: string | null;
   education: string | null;
-  profilePhotoUrl: string | null;
+
 }
 
 export default function ProfileForm({
@@ -76,8 +75,6 @@ export default function ProfileForm({
   userEmail: string;
 }) {
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [currentPhotoUrl, setCurrentPhotoUrl] = useState(profile?.profilePhotoUrl || null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">(
     "success"
@@ -96,34 +93,6 @@ export default function ProfileForm({
     }
     setSaving(false);
     setTimeout(() => setMessage(""), 3000);
-  }
-
-  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    setMessage("");
-
-    try {
-      const formData = new FormData();
-      formData.append("photo", file);
-
-      const result = await uploadProfilePhoto(formData);
-      if (result?.error) {
-        setMessage(result.error);
-        setMessageType("error");
-      } else if (result?.photoUrl) {
-        setCurrentPhotoUrl(result.photoUrl);
-        setMessage("Profile photo updated successfully!");
-        setMessageType("success");
-      }
-    } catch (err) {
-      console.error("Photo upload failed:", err);
-      setMessage("Failed to upload photo. The file may be too large or there was a server error.");
-      setMessageType("error");
-    }
-    setUploading(false);
   }
 
   return (
@@ -152,50 +121,14 @@ export default function ProfileForm({
         <div 
           className="avatar avatar-xl" 
           style={{ 
-            position: "relative", 
-            cursor: "pointer", 
             overflow: "hidden",
-            border: "2px solid var(--color-border-hover)"
+            border: "2px solid var(--color-border-hover)",
+            fontSize: "var(--text-2xl)",
+            fontWeight: 700,
           }}
-          title="Click to change profile photo"
-          onClick={() => document.getElementById("profile-photo-input")?.click()}
         >
-          {uploading ? (
-            <Loader2 size={24} className="spinner" />
-          ) : currentPhotoUrl ? (
-            <img 
-              src={currentPhotoUrl} 
-              alt={userName} 
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            userName?.charAt(0).toUpperCase() || "U"
-          )}
-          <div 
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              background: "rgba(0, 0, 0, 0.6)",
-              height: "26px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: 0.85,
-            }}
-          >
-            <Camera size={14} style={{ color: "#fff" }} />
-          </div>
+          {userName?.charAt(0).toUpperCase() || "U"}
         </div>
-        <input 
-          type="file" 
-          id="profile-photo-input" 
-          accept="image/*" 
-          style={{ display: "none" }} 
-          onChange={handlePhotoChange}
-          disabled={uploading}
-        />
         <div>
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: 700 }}>
             {userName}
