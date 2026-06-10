@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import {
   Brain,
   LayoutDashboard,
@@ -12,7 +11,6 @@ import {
   User,
   Search,
   LogOut,
-  Settings,
 } from "lucide-react";
 
 export default async function DashboardLayout({

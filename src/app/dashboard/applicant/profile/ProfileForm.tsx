@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { updateProfile } from "@/actions/profile";
 import {
-  User,
   Loader2,
   CheckCircle2,
   MapPin,
