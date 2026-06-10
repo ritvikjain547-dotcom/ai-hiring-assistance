@@ -105,17 +105,23 @@ export default function ProfileForm({
     setUploading(true);
     setMessage("");
 
-    const formData = new FormData();
-    formData.append("photo", file);
+    try {
+      const formData = new FormData();
+      formData.append("photo", file);
 
-    const result = await uploadProfilePhoto(formData);
-    if (result?.error) {
-      setMessage(result.error);
+      const result = await uploadProfilePhoto(formData);
+      if (result?.error) {
+        setMessage(result.error);
+        setMessageType("error");
+      } else if (result?.photoUrl) {
+        setCurrentPhotoUrl(result.photoUrl);
+        setMessage("Profile photo updated successfully!");
+        setMessageType("success");
+      }
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+      setMessage("Failed to upload photo. The file may be too large or there was a server error.");
       setMessageType("error");
-    } else if (result?.photoUrl) {
-      setCurrentPhotoUrl(result.photoUrl);
-      setMessage("Profile photo updated successfully!");
-      setMessageType("success");
     }
     setUploading(false);
   }
