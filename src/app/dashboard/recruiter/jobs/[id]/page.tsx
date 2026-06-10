@@ -15,6 +15,7 @@ import {
   ExternalLink,
   Download,
 } from "lucide-react";
+import { DeleteJobButton } from "./DeleteJobButton";
 import { StatusUpdateButton } from "./StatusUpdateButton";
 import PhotoViewer from "@/components/PhotoViewer";
 
@@ -94,17 +95,20 @@ export default async function RecruiterJobDetailPage({
               </span>
             </div>
           </div>
-          <span
-            className={`badge ${
-              job.status === "OPEN"
-                ? "badge-success"
-                : job.status === "CLOSED"
-                ? "badge-danger"
-                : "badge-neutral"
-            }`}
-          >
-            {job.status}
-          </span>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "var(--space-3)" }}>
+            <span
+              className={`badge ${
+                job.status === "OPEN"
+                  ? "badge-success"
+                  : job.status === "CLOSED"
+                  ? "badge-danger"
+                  : "badge-neutral"
+              }`}
+            >
+              {job.status}
+            </span>
+            <DeleteJobButton jobId={job.id} jobTitle={job.title} />
+          </div>
         </div>
 
         {skills.length > 0 && (
