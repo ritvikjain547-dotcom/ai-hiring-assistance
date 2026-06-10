@@ -10,10 +10,7 @@ const globalForPrisma = globalThis as unknown as {
 function getPool(): Pool {
   if (globalForPrisma.pgPool) return globalForPrisma.pgPool;
 
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL environment variable is not defined");
-  }
+  const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
 
   const pool = new Pool({
     connectionString,
