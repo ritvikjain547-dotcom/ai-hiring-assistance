@@ -148,7 +148,8 @@ export async function applyForJob(formData: FormData) {
   return { success: true };
   } catch (err) {
     console.error("Failed to submit application:", err);
-    return { error: "Something went wrong while submitting your application. Please try again." };
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return { error: `Something went wrong: ${message}` };
   }
 }
 
