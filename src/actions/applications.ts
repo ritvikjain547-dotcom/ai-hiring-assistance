@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { supabase } from "@/lib/supabase";
 import { sendApplicationReceivedEmail, sendStatusUpdateEmail } from "@/lib/email";
@@ -110,12 +109,10 @@ export async function applyForJob(formData: FormData) {
 
     resumeUrl = publicUrl;
   } else {
-    // Fallback: Create upload directory and write to local disk
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "resumes");
-    await mkdir(uploadDir, { recursive: true });
-    const filePath = path.join(uploadDir, fileName);
-    await writeFile(filePath, buffer);
-    resumeUrl = `/uploads/resumes/${fileName}`;
+    // Fallback: Store as base64 data URL in the database
+    // This works on serverless platforms like Vercel where the filesystem is read-only
+    const base64 = buffer.toString("base64");
+    resumeUrl = `data:${file.type};base64,${base64}`;
   }
 
   await prisma.application.create({
