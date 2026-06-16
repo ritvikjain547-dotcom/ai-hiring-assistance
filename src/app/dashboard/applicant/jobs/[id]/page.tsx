@@ -26,15 +26,38 @@ export default async function ApplicantJobDetailPage({
   const session = await auth();
   if (!session?.user) return null;
 
-  const userWithProfile = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: { profile: true },
-  });
+  let userWithProfile;
+  let job;
+  let alreadyApplied = false;
 
-  const job = await getJobById(id);
+  try {
+    [userWithProfile, job, alreadyApplied] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { profile: true },
+      }),
+      getJobById(id),
+      hasApplied(id),
+    ]);
+  } catch (error) {
+    console.error("Failed to load job detail page:", error);
+    return (
+      <div className="animate-fade-in" style={{ textAlign: "center", padding: "var(--space-12)" }}>
+        <h2 style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: "var(--space-4)" }}>
+          Something went wrong
+        </h2>
+        <p style={{ color: "var(--color-text-secondary)", marginBottom: "var(--space-6)" }}>
+          We couldn&apos;t load the job details. This is usually a temporary issue.
+        </p>
+        <Link href="/dashboard/applicant/jobs" className="btn btn-primary btn-sm">
+          <ArrowLeft size={16} />
+          Back to Jobs
+        </Link>
+      </div>
+    );
+  }
+
   if (!job) notFound();
-
-  const alreadyApplied = await hasApplied(id);
 
   const skills = job.requiredSkills
     ? job.requiredSkills.split(",").map((s: string) => s.trim())

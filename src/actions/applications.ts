@@ -14,6 +14,7 @@ export async function applyForJob(formData: FormData) {
     return { error: "Unauthorized" };
   }
 
+  try {
   const jobId = formData.get("jobId") as string;
   const coverLetter = formData.get("coverLetter") as string;
   const email = formData.get("email") as string;
@@ -148,6 +149,10 @@ export async function applyForJob(formData: FormData) {
   revalidatePath(`/dashboard/applicant/jobs/${jobId}`);
   revalidatePath("/dashboard/applicant/applications");
   return { success: true };
+  } catch (err) {
+    console.error("Failed to submit application:", err);
+    return { error: "Something went wrong while submitting your application. Please try again." };
+  }
 }
 
 export async function getMyApplications() {
