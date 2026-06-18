@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import path from "path";
 import { supabase } from "@/lib/supabase";
 import { sendApplicationReceivedEmail, sendStatusUpdateEmail } from "@/lib/email";
@@ -249,30 +250,34 @@ export async function applyForJob(formData: FormData) {
     }
   }
 
-  // Send confirmation email (non-blocking)
-  Promise.resolve(jobDetails).then((job) => {
-    if (job && session.user.email) {
-      sendApplicationReceivedEmail(
-        session.user.name || "Applicant",
-        session.user.email,
-        job.title,
-        job.company
-      ).catch((err) => {
-        console.error("Failed to send application confirmation email:", err);
-      });
+  // Schedule background work using Next.js after() to ensure it runs
+  // even after the response is sent (fire-and-forget promises get killed)
+  after(async () => {
+    // Send confirmation email
+    try {
+      if (jobDetails && session.user.email) {
+        await sendApplicationReceivedEmail(
+          session.user.name || "Applicant",
+          session.user.email,
+          jobDetails.title,
+          jobDetails.company
+        );
+      }
+    } catch (err) {
+      console.error("Failed to send application confirmation email:", err);
     }
-  }).catch((err) => {
-    console.error("Failed to fetch job details for confirmation email:", err);
-  });
 
-  // Trigger AI analysis in the background (non-blocking)
-  if (isAiConfigured()) {
-    runAiAnalysis(application.id, jobId).catch((err) => {
-      console.error("Background AI analysis failed:", err);
-    });
-  } else {
-    console.log("[AI] Skipping AI analysis — no Gemini API keys configured");
-  }
+    // Trigger AI resume analysis
+    if (isAiConfigured()) {
+      try {
+        await runAiAnalysis(application.id, jobId);
+      } catch (err) {
+        console.error("Background AI analysis failed:", err);
+      }
+    } else {
+      console.log("[AI] Skipping AI analysis — no Gemini API keys configured");
+    }
+  });
 
   revalidatePath(`/dashboard/applicant/jobs/${jobId}`);
   revalidatePath("/dashboard/applicant/applications");
@@ -348,24 +353,25 @@ export async function updateApplicationStatus(
     },
   });
 
-  // Send status update email (non-blocking)
+  // Send status update email after response using after()
   if (["REVIEWING", "SHORTLISTED", "REJECTED", "HIRED"].includes(status)) {
-    if (isOverride) {
-      // Send override notification
-      sendOverrideEmail(applicationId, status).catch((err) => {
-        console.error("Failed to send override email:", err);
-      });
-    } else {
-      sendStatusUpdateEmail(
-        application.applicant.name || "Applicant",
-        application.applicant.email,
-        application.job.title,
-        application.job.company,
-        status as any
-      ).catch((err) => {
+    after(async () => {
+      try {
+        if (isOverride) {
+          await sendOverrideEmail(applicationId, status);
+        } else {
+          await sendStatusUpdateEmail(
+            application.applicant.name || "Applicant",
+            application.applicant.email,
+            application.job.title,
+            application.job.company,
+            status as any
+          );
+        }
+      } catch (err) {
         console.error("Failed to send status update email:", err);
-      });
-    }
+      }
+    });
   }
 
   revalidatePath(`/dashboard/recruiter/jobs/${application.jobId}`);

@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma as any),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -103,7 +103,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     async createUser({ user }) {
       try {
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         const roleCookie = cookieStore.get("google-oauth-role")?.value;
         const role = roleCookie === "RECRUITER" ? "RECRUITER" : "APPLICANT";
         

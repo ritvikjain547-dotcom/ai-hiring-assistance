@@ -377,7 +377,7 @@ export default function NewJobPage() {
           </div>
 
           {/* Round Names Inputs */}
-          {totalRounds > 0 && (
+          {Number(totalRounds) > 0 && (
             <div
               style={{
                 padding: "var(--space-5)",
