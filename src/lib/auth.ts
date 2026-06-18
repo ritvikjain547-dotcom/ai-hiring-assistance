@@ -1,9 +1,18 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -15,14 +24,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const { prisma } = await import("@/lib/prisma");
-
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },
         });
 
-        if (!user) {
-          return null;
+        if (!user || !user.passwordHash) {
+          return null; // Ensure they have a password hash (not Google users)
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -56,8 +63,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const email = credentials.email as string;
         const otp = credentials.otp as string;
-
-        const { prisma } = await import("@/lib/prisma");
 
         const user = await prisma.user.findUnique({
           where: { email },
@@ -94,6 +99,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      try {
+        const cookieStore = cookies();
+        const roleCookie = cookieStore.get("google-oauth-role")?.value;
+        const role = roleCookie === "RECRUITER" ? "RECRUITER" : "APPLICANT";
+        
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role },
+        });
+      } catch (error) {
+        console.error("Error setting role for new OAuth user:", error);
+      }
+    }
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -105,7 +126,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        (session.user as { role?: string }).role = token.role as "RECRUITER" | "APPLICANT";
+        
+        // Fetch fresh role from DB if possible to avoid stale JWT on first sign-in
+        const dbUser = await prisma.user.findUnique({ where: { id: token.id as string } });
+        if (dbUser) {
+          (session.user as { role?: string }).role = dbUser.role as "RECRUITER" | "APPLICANT";
+        } else {
+          (session.user as { role?: string }).role = token.role as "RECRUITER" | "APPLICANT";
+        }
       }
       return session;
     },
