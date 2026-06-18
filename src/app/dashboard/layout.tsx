@@ -78,12 +78,12 @@ export default async function DashboardLayout({
       {/* Top Bar */}
       <div className="dashboard-topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
-          <Link href="/" className="navbar-logo">
+          <Link href="/" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
               <Brain size={18} />
             </div>
             <span>
-              Hire<span className="gradient-text">AI</span>
+              Hire<span style={{ color: "#38bdf8" }}>AI</span>
             </span>
           </Link>
         </div>
@@ -104,7 +104,7 @@ export default async function DashboardLayout({
             <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
               {session.user.name?.charAt(0).toUpperCase() || "U"}
             </div>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>
               {session.user.name}
             </span>
           </div>
@@ -114,7 +114,7 @@ export default async function DashboardLayout({
               await signOut({ redirectTo: "/" });
             }}
           >
-            <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn">
+            <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn" style={{ color: "white" }}>
               <LogOut size={16} />
               Sign Out
             </button>
