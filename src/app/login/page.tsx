@@ -149,6 +149,14 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
+      {/* Animated Background Blobs */}
+      <div className="animated-background">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
+      <div className="bg-grid" style={{ zIndex: 0, opacity: 0.3 }} />
+
       <div className="hero-glow" />
       <div className="auth-card">
         <div className="auth-header">
