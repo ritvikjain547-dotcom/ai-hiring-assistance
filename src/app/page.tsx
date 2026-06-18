@@ -15,13 +15,16 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 
 export default function HomePage() {
   return (
-    <main>
+    <main style={{ position: "relative" }}>
       {/* Animated Background Blobs */}
       <div className="animated-background">
         <div className="blob blob-1"></div>
         <div className="blob blob-2"></div>
         <div className="blob blob-3"></div>
       </div>
+      {/* Subtle grid overlay */}
+      <div className="bg-grid" style={{ zIndex: 0, opacity: 0.4 }} />
+
       {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-inner">
