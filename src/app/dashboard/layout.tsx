@@ -11,6 +11,7 @@ import {
   User,
   Search,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 
 export default async function DashboardLayout({
@@ -38,7 +39,12 @@ export default async function DashboardLayout({
       links: [
         { href: "/dashboard/recruiter/jobs", label: "My Jobs", icon: Briefcase },
         { href: "/dashboard/recruiter/jobs/new", label: "Post New Job", icon: FileText },
-        { href: "/dashboard/recruiter/applications", label: "Applications", icon: Users },
+      ],
+    },
+    {
+      section: "AI Screening",
+      links: [
+        { href: "/dashboard/recruiter/applications", label: "AI Screening", icon: Sparkles },
       ],
     },
   ];

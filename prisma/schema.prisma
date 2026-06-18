@@ -39,6 +39,20 @@ enum ApplicationStatus {
   HIRED
 }
 
+enum AiClassification {
+  MATCHING
+  NEAR_BOUND
+  NOT_MATCHING
+  PENDING_REVIEW
+}
+
+enum RoundStatus {
+  PENDING
+  SCHEDULED
+  PASSED
+  FAILED
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -51,6 +65,7 @@ model User {
   profile      Profile?
   jobs         Job[]
   applications Application[]
+  preferences  RecruiterPreference[]
 
   @@map("users")
 }
@@ -93,33 +108,77 @@ model Job {
   salaryMax       Int?
   salaryCurrency  String?        @default("USD")
   status          JobStatus      @default(OPEN)
+  totalRounds     Int?           @default(1)
+  roundNames      String?        @db.Text
   deadline        DateTime?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  recruiter    User          @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  recruiter    User                 @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   applications Application[]
+  preference   RecruiterPreference?
 
   @@map("jobs")
 }
 
 model Application {
-  id          String            @id @default(cuid())
-  jobId       String
-  applicantId String
-  coverLetter String?           @db.Text
-  resumeUrl   String?
-  status      ApplicationStatus @default(PENDING)
-  aiScore     Float?
-  aiAnalysis  String?           @db.Text
-  appliedAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id               String            @id @default(cuid())
+  jobId            String
+  applicantId      String
+  coverLetter      String?           @db.Text
+  resumeUrl        String?
+  status           ApplicationStatus @default(PENDING)
+  aiScore          Float?
+  aiAnalysis       String?           @db.Text
+  aiClassification AiClassification? @default(PENDING_REVIEW)
+  aiSkillsMatch    String?           @db.Text
+  aiSkillsGap      String?           @db.Text
+  aiExperienceMatch Boolean?
+  aiEducationMatch  Boolean?
+  aiOverallSummary  String?          @db.Text
+  resumeText        String?          @db.Text
+  emailSentAt       DateTime?
+  emailScheduledFor DateTime?
+  recruiterOverride Boolean          @default(false)
+  currentRound      Int?             @default(0)
+  totalRounds       Int?
+  rejectionReason   String?          @db.Text
+  approvalNotes     String?          @db.Text
+  recruiterFeedback String?          @db.Text
+  appliedAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
-  job       Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  applicant User @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  job              Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicant        User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  interviewRounds  InterviewRound[]
 
   @@unique([jobId, applicantId])
   @@map("applications")
+}
+
+model RecruiterPreference {
+  id                    String   @id @default(cuid())
+  jobId                 String   @unique
+  recruiterId           String
+
+  minExperienceYears    Int?
+  maxExperienceYears    Int?
+  requiredEducation     String?
+  mustHaveSkills        String?  @db.Text
+  niceToHaveSkills      String?  @db.Text
+  industryPreference    String?
+  recruitmentStyle      String?  @default("balanced")
+  priorityFactors       String?  @db.Text
+  customCriteria        String?  @db.Text
+  locationPreference    String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  job       Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  recruiter User @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+
+  @@map("recruiter_preferences")
 }
 
 model OtpToken {
@@ -133,3 +192,20 @@ model OtpToken {
   @@map("otp_tokens")
 }
 
+model InterviewRound {
+  id            String      @id @default(cuid())
+  applicationId String
+  roundNumber   Int
+  roundName     String
+  status        RoundStatus @default(PENDING)
+  scheduledAt   DateTime?
+  completedAt   DateTime?
+  feedback      String?     @db.Text
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, roundNumber])
+  @@map("interview_rounds")
+}

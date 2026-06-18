@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Briefcase, Users, UserCheck, Clock, Plus, ArrowRight } from "lucide-react";
+import { Briefcase, Users, UserCheck, Clock, Plus, ArrowRight, Brain, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
 export default async function RecruiterDashboard() {
   const session = await auth();
@@ -33,6 +33,23 @@ export default async function RecruiterDashboard() {
   const openJobs = await prisma.job.count({
     where: { recruiterId: session.user.id, status: "OPEN" },
   });
+
+  // AI Classification counts
+  const [aiScreenedCount, matchingCount, nearBoundCount, notMatchingCount] =
+    await Promise.all([
+      prisma.application.count({
+        where: { job: { recruiterId: session.user.id }, aiScore: { not: null } },
+      }),
+      prisma.application.count({
+        where: { job: { recruiterId: session.user.id }, aiClassification: "MATCHING" },
+      }),
+      prisma.application.count({
+        where: { job: { recruiterId: session.user.id }, aiClassification: "NEAR_BOUND" },
+      }),
+      prisma.application.count({
+        where: { job: { recruiterId: session.user.id }, aiClassification: "NOT_MATCHING" },
+      }),
+    ]);
 
   const stats = [
     {
@@ -79,7 +96,7 @@ export default async function RecruiterDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid-stats" style={{ marginBottom: "var(--space-8)" }}>
+      <div className="grid-stats" style={{ marginBottom: "var(--space-6)" }}>
         {stats.map((stat, i) => (
           <div key={i} className={`stat-card ${stat.color}`}>
             <div className={`stat-icon ${stat.color}`}>{stat.icon}</div>
@@ -88,6 +105,47 @@ export default async function RecruiterDashboard() {
           </div>
         ))}
       </div>
+
+      {/* AI Screening Overview */}
+      {aiScreenedCount > 0 && (
+        <div className="card" style={{ marginBottom: "var(--space-6)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-5)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+              <div className="ai-icon-wrapper" style={{ width: 36, height: 36 }}>
+                <Brain size={18} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: "var(--text-lg)", fontWeight: 700 }}>AI Screening Overview</h2>
+                <p style={{ fontSize: "var(--text-xs)", color: "var(--color-text-tertiary)" }}>
+                  {aiScreenedCount} of {applicationsCount} applications analyzed
+                </p>
+              </div>
+            </div>
+            <Link href="/dashboard/recruiter/applications" className="btn btn-ghost btn-sm">
+              View All
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="ai-classification-stats">
+            <div className="ai-class-stat matching">
+              <CheckCircle2 size={18} />
+              <span className="ai-class-stat-value">{matchingCount}</span>
+              <span className="ai-class-stat-label">Matching</span>
+            </div>
+            <div className="ai-class-stat near">
+              <AlertTriangle size={18} />
+              <span className="ai-class-stat-value">{nearBoundCount}</span>
+              <span className="ai-class-stat-label">Near Bound</span>
+            </div>
+            <div className="ai-class-stat not-matching">
+              <XCircle size={18} />
+              <span className="ai-class-stat-value">{notMatchingCount}</span>
+              <span className="ai-class-stat-label">Not Matching</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Applications */}
       <div className="card">
@@ -144,23 +202,39 @@ export default async function RecruiterDashboard() {
                     })}
                   </div>
                 </div>
-                <span
-                  className={`badge ${
-                    app.status === "PENDING"
-                      ? "badge-warning"
-                      : app.status === "SHORTLISTED"
-                      ? "badge-success"
-                      : app.status === "REJECTED"
-                      ? "badge-danger"
-                      : app.status === "REVIEWING"
-                      ? "badge-info"
-                      : app.status === "HIRED"
-                      ? "badge-success"
-                      : "badge-neutral"
-                  }`}
-                >
-                  {app.status}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
+                  {(app as any).aiClassification && (app as any).aiClassification !== "PENDING_REVIEW" && (
+                    <span
+                      className={`badge ${
+                        (app as any).aiClassification === "MATCHING"
+                          ? "ai-badge-matching"
+                          : (app as any).aiClassification === "NEAR_BOUND"
+                          ? "ai-badge-near"
+                          : "ai-badge-not-matching"
+                      }`}
+                      style={{ fontSize: "10px" }}
+                    >
+                      {(app as any).aiClassification === "MATCHING" ? "✅" : (app as any).aiClassification === "NEAR_BOUND" ? "🔶" : "❌"}
+                    </span>
+                  )}
+                  <span
+                    className={`badge ${
+                      app.status === "PENDING"
+                        ? "badge-warning"
+                        : app.status === "SHORTLISTED"
+                        ? "badge-success"
+                        : app.status === "REJECTED"
+                        ? "badge-danger"
+                        : app.status === "REVIEWING"
+                        ? "badge-info"
+                        : app.status === "HIRED"
+                        ? "badge-success"
+                        : "badge-neutral"
+                    }`}
+                  >
+                    {app.status}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

@@ -22,12 +22,15 @@ export async function createJob(formData: FormData) {
   const salaryMin = formData.get("salaryMin") as string;
   const salaryMax = formData.get("salaryMax") as string;
   const deadline = formData.get("deadline") as string;
+  const totalRounds = formData.get("totalRounds") as string;
+  const roundNames = formData.get("roundNames") as string;
+  const setupAi = formData.get("setupAi") as string;
 
   if (!title || !company || !description || !location) {
     return { error: "Please fill in all required fields" };
   }
 
-  await prisma.job.create({
+  const job = await prisma.job.create({
     data: {
       recruiterId: session.user.id,
       title,
@@ -40,12 +43,20 @@ export async function createJob(formData: FormData) {
       requiredSkills: requiredSkills || null,
       salaryMin: salaryMin ? parseInt(salaryMin) : null,
       salaryMax: salaryMax ? parseInt(salaryMax) : null,
+      salaryCurrency: (formData.get("salaryCurrency") as string) || "USD",
+      totalRounds: totalRounds ? parseInt(totalRounds) : 1,
+      roundNames: roundNames || null,
       deadline: deadline ? new Date(deadline) : null,
     },
   });
 
   revalidatePath("/dashboard/recruiter/jobs");
-  redirect("/dashboard/recruiter/jobs");
+  
+  if (setupAi === "true") {
+    redirect(`/dashboard/recruiter/jobs/${job.id}/preferences`);
+  } else {
+    redirect("/dashboard/recruiter/jobs");
+  }
 }
 
 export async function updateJob(jobId: string, formData: FormData) {
@@ -121,6 +132,7 @@ export async function getJobById(jobId: string) {
     where: { id: jobId },
     include: {
       recruiter: { select: { name: true, email: true } },
+      preference: true,
       applications: {
         include: {
           applicant: {
@@ -130,8 +142,14 @@ export async function getJobById(jobId: string) {
               profile: true,
             },
           },
+          interviewRounds: {
+            orderBy: { roundNumber: "asc" },
+          },
         },
-        orderBy: { appliedAt: "desc" },
+        orderBy: [
+          { aiScore: { sort: "desc", nulls: "last" } },
+          { appliedAt: "desc" },
+        ],
       },
       _count: { select: { applications: true } },
     },

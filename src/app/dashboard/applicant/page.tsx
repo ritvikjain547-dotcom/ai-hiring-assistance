@@ -184,7 +184,12 @@ export default async function ApplicantDashboard() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
             {recentApps.map((app) => (
-              <div key={app.id} className="application-card">
+              <Link
+                key={app.id}
+                href={`/dashboard/applicant/applications/${app.id}`}
+                className="application-card"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
                 <div
                   style={{
                     width: 44,
@@ -200,10 +205,10 @@ export default async function ApplicantDashboard() {
                 >
                   <FileText size={20} />
                 </div>
-                <div className="application-info">
-                  <div className="application-job-title">{app.job.title}</div>
-                  <div className="application-company">{app.job.company}</div>
-                  <div className="application-date">
+                <div className="application-info" style={{ flex: 1 }}>
+                  <div className="application-job-title" style={{ fontWeight: 600 }}>{app.job.title}</div>
+                  <div className="application-company" style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>{app.job.company}</div>
+                  <div className="application-date" style={{ fontSize: "var(--text-xs)", color: "var(--color-text-tertiary)", marginTop: 2 }}>
                     Applied{" "}
                     {new Date(app.appliedAt).toLocaleDateString("en-US", {
                       month: "short",
@@ -229,7 +234,7 @@ export default async function ApplicantDashboard() {
                 >
                   {app.status}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         )}

@@ -287,3 +287,82 @@ export async function sendPasswordResetEmail(email: string, otp: string) {
   return sendEmail({ to: email, subject, html });
 }
 
+export async function sendAiDecisionEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  classification: string,
+  aiSummary: string
+) {
+  let badgeClass = 'badge-welcome';
+  let badgeText = 'Application Update';
+  let subject = `Application Update: ${jobTitle} at ${company}`;
+  let bodyContent = '';
+
+  switch (classification) {
+    case 'MATCHING':
+      badgeClass = 'badge-shortlisted';
+      badgeText = 'Shortlisted';
+      subject = `🎉 Great News! You've been shortlisted for ${jobTitle} at ${company}`;
+      bodyContent = `
+        <p>We're excited to share that after our AI-powered initial screening, your profile has been identified as a <strong>strong match</strong> for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>!</p>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <strong style="color: #15803d;">AI Assessment:</strong>
+          <p style="color: #166534; margin: 8px 0 0;">${aiSummary}</p>
+        </div>
+        <p>Our recruitment team will review your application next and reach out to schedule the next steps. Please keep an eye on your dashboard for updates.</p>
+      `;
+      break;
+
+    case 'NEAR_BOUND':
+      badgeClass = 'badge-reviewing';
+      badgeText = 'Under Review';
+      subject = `Application Update: Your profile is under review for ${jobTitle} at ${company}`;
+      bodyContent = `
+        <p>Thank you for your interest in the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <strong style="color: #d97706;">AI Assessment:</strong>
+          <p style="color: #92400e; margin: 8px 0 0;">${aiSummary}</p>
+        </div>
+        <p>Your profile shows potential for this role and has been flagged for further review by our recruitment team. We'll be in touch once a decision is made.</p>
+        <p>In the meantime, you can track your application status from your dashboard.</p>
+      `;
+      break;
+
+    case 'NOT_MATCHING':
+      badgeClass = 'badge-rejected';
+      badgeText = 'Application Update';
+      subject = `Application update regarding ${jobTitle} at ${company}`;
+      bodyContent = `
+        <p>Thank you for taking the time to apply for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <strong style="color: #b91c1c;">Assessment Summary:</strong>
+          <p style="color: #991b1b; margin: 8px 0 0;">${aiSummary}</p>
+        </div>
+        <p>After our initial screening, we've determined that your profile may not be the strongest fit for this particular role at this time. However, we encourage you to apply for other positions that may better align with your skills and experience.</p>
+        <p>We appreciate your interest and wish you the very best in your career journey.</p>
+      `;
+      break;
+
+    default:
+      bodyContent = `
+        <p>Thank you for your application to the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+        <p>Your application is currently being processed. We'll update you once a decision has been made.</p>
+      `;
+  }
+
+  const content = `
+    <span class="badge ${badgeClass}">${badgeText}</span>
+    <p>Dear ${name},</p>
+    ${bodyContent}
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" class="button">View Dashboard</a>
+    </div>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+
