@@ -9,17 +9,25 @@ import {
   ArrowRight,
   Sparkles,
   CheckCircle2,
+  Orbit,
 } from "lucide-react";
+import AnimatedCounter from "@/components/AnimatedCounter";
 
 export default function HomePage() {
   return (
     <main>
+      {/* Animated Background Blobs */}
+      <div className="animated-background">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
       {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-inner">
           <Link href="/" className="navbar-logo">
             <div className="navbar-logo-icon">
-              <Brain size={20} />
+              <Orbit size={20} />
             </div>
             <span>
               Hire<span className="gradient-text">AI</span>
@@ -77,6 +85,7 @@ export default function HomePage() {
           style={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
             gap: "var(--space-8)",
             marginTop: "var(--space-12)",
             animation: "slide-up 0.6s ease-out 0.4s both",
@@ -105,30 +114,46 @@ export default function HomePage() {
       </section>
 
       {/* Logos Section */}
-      <section style={{ padding: "var(--space-8) var(--space-8)", borderTop: "1px solid var(--color-border)", borderBottom: "1px solid var(--color-border)", textAlign: "center", background: "var(--color-bg-secondary)" }}>
-        <p style={{ fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-text-tertiary)", fontWeight: 600, marginBottom: "var(--space-5)" }}>
+      <section style={{ padding: "var(--space-6) 0", borderTop: "1px solid var(--color-border)", borderBottom: "1px solid var(--color-border)", textAlign: "center", background: "var(--color-bg-secondary)", overflow: "hidden" }}>
+        <p style={{ fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-text-tertiary)", fontWeight: 600, marginBottom: "var(--space-4)" }}>
           Trusted by hiring teams at world-class companies
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "var(--space-12)", opacity: 0.6 }}>
-          {["Stripe", "Linear", "Vercel", "Figma", "Retool", "Supabase"].map((logo, i) => (
-            <span key={i} style={{ fontSize: "var(--text-lg)", fontWeight: 800, color: "var(--color-text-primary)", letterSpacing: "-0.04em" }}>
-              {logo}
-            </span>
-          ))}
+        <div className="horizontal-marquee-container" style={{ padding: "0" }}>
+          <div className="horizontal-marquee">
+            {[
+              "Google", "Flipkart", "Amazon", "Microsoft", "Netflix", "Meta", "Apple", "Spotify", "Uber", "Airbnb",
+              "Google", "Flipkart", "Amazon", "Microsoft", "Netflix", "Meta", "Apple", "Spotify", "Uber", "Airbnb" // Duplicate for infinite scroll
+            ].map((company, i) => (
+              <span 
+                key={i} 
+                style={{ 
+                  fontSize: "var(--text-2xl)", 
+                  fontWeight: 800, 
+                  color: "var(--color-text-primary)", 
+                  letterSpacing: "-0.05em",
+                  opacity: 0.6,
+                  display: "inline-flex",
+                  alignItems: "center"
+                }}
+              >
+                {company}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section id="stats" className="stats-section">
+      <section id="stats" className="stats-section" style={{ marginTop: "100px" }}>
         <div className="stats-grid">
           {[
-            { number: "50K+", label: "Jobs Posted" },
-            { number: "200K+", label: "Active Candidates" },
-            { number: "15K+", label: "Companies Trust Us" },
-            { number: "92%", label: "Faster Hiring" },
+            { end: 50, suffix: "K+", label: "Jobs Posted" },
+            { end: 200, suffix: "K+", label: "Active Candidates" },
+            { end: 15, suffix: "K+", label: "Companies Trust Us" },
+            { end: 92, suffix: "%", label: "Faster Hiring" },
           ].map((stat, i) => (
             <div key={i}>
-              <div className="stats-number">{stat.number}</div>
+              <AnimatedCounter end={stat.end} suffix={stat.suffix} />
               <div className="stats-label">{stat.label}</div>
             </div>
           ))}
@@ -420,7 +445,7 @@ export default function HomePage() {
           }}
         >
           <div className="navbar-logo-icon" style={{ width: 28, height: 28 }}>
-            <Brain size={16} />
+            <Orbit size={16} />
           </div>
           <span style={{ fontWeight: 700 }}>
             Hire<span className="gradient-text">AI</span>

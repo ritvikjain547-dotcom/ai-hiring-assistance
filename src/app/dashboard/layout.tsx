@@ -12,6 +12,7 @@ import {
   Search,
   LogOut,
   Sparkles,
+  Orbit,
 } from "lucide-react";
 
 export default async function DashboardLayout({
@@ -80,7 +81,7 @@ export default async function DashboardLayout({
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
           <Link href="/" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
-              <Brain size={18} />
+              <Orbit size={18} />
             </div>
             <span>
               Hire<span style={{ color: "#38bdf8" }}>AI</span>

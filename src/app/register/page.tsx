@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { registerUser } from "@/actions/auth";
-import { Brain, Mail, Lock, User, ArrowRight, Loader2, Briefcase, UserCheck } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2, Briefcase, UserCheck, Orbit } from "lucide-react";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -46,7 +46,7 @@ function RegisterForm() {
             style={{ justifyContent: "center", marginBottom: "var(--space-6)" }}
           >
             <div className="navbar-logo-icon">
-              <Brain size={20} />
+              <Orbit size={24} />
             </div>
             <span>
               Hire<span className="gradient-text">AI</span>

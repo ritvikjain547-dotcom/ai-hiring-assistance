@@ -692,6 +692,10 @@ input, textarea, select {
 }
 
 .navbar-links {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -1146,13 +1150,12 @@ input, textarea, select {
    ============================================ */
 
 .landing-hero {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-8);
+  padding: 160px var(--space-8) var(--space-16);
   position: relative;
 }
 
@@ -1279,6 +1282,20 @@ input, textarea, select {
   justify-content: center;
   margin-bottom: var(--space-5);
   font-size: var(--text-xl);
+  animation: float-icon 4s ease-in-out infinite alternate;
+}
+
+@keyframes float-icon {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+.feature-icon svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feature-card:hover .feature-icon svg {
+  transform: scale(1.25) rotate(8deg);
 }
 
 .feature-title {
@@ -1980,6 +1997,131 @@ input, textarea, select {
 details[open] .faq-chevron {
   transform: rotate(180deg);
 }
+
+/* Vertical Marquee Animation */
+@keyframes scroll-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* Horizontal Marquee Animation */
+@keyframes scroll-horizontal {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.vertical-marquee {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  animation: scroll-vertical 20s linear infinite;
+}
+
+.horizontal-marquee {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-12);
+  animation: scroll-horizontal 30s linear infinite;
+  white-space: nowrap;
+}
+
+.vertical-marquee-container {
+  overflow: hidden;
+  position: relative;
+  height: 400px;
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+.horizontal-marquee-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.vertical-marquee:hover,
+.horizontal-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Background Blobs */
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: transparent;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float-blob 20s infinite ease-in-out alternate;
+}
+
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(99, 102, 241, 0.15); /* Indigo */
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 600px;
+  height: 600px;
+  background: rgba(6, 182, 212, 0.1); /* Cyan */
+  bottom: -200px;
+  right: -100px;
+  animation-duration: 25s;
+  animation-delay: -5s;
+}
+
+.blob-3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(139, 92, 246, 0.1); /* Purple */
+  top: 40%;
+  left: 30%;
+  animation-duration: 30s;
+  animation-delay: -10s;
+}
+
+@keyframes float-blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+
 
 details summary::marker {
   display: none;

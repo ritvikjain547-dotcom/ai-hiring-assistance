@@ -9,7 +9,7 @@ import {
   sendResetPasswordOTP,
   resetPasswordWithOTP
 } from "@/actions/auth";
-import { Brain, Mail, Lock, Key, ArrowRight, Loader2, RefreshCw, ArrowLeft } from "lucide-react";
+import { Orbit, Mail, Lock, Key, ArrowRight, Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const [loginMode, setLoginMode] = useState<"password" | "otp" | "forgot-password">("password");
@@ -157,7 +157,7 @@ export default function LoginPage() {
             style={{ justifyContent: "center", marginBottom: "var(--space-6)" }}
           >
             <div className="navbar-logo-icon">
-              <Brain size={20} />
+              <Orbit size={24} />
             </div>
             <span>
               Hire<span className="gradient-text">AI</span>
