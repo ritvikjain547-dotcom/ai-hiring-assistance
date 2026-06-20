@@ -34,22 +34,40 @@ function getStatusConfig(status: string) {
   }
 }
 
-export default async function MyApplicationsPage() {
-  const applications = await getMyApplications();
+export default async function MyApplicationsPage(props: {
+  searchParams?: Promise<{ status?: string }>;
+}) {
+  const searchParams = props.searchParams ? await props.searchParams : {};
+  const statusFilter = searchParams.status;
 
-  // Compute stats
+  let applications = await getMyApplications();
+
+  // Compute stats before filtering so the top stats cards still show global metrics
   const totalApps = applications.length;
   const activeApps = applications.filter((a) => ["PENDING", "REVIEWING", "SHORTLISTED"].includes(a.status)).length;
   const hiredApps = applications.filter((a) => a.status === "HIRED").length;
   const rejectedApps = applications.filter((a) => a.status === "REJECTED").length;
 
+  if (statusFilter) {
+    applications = applications.filter((a) => a.status === statusFilter);
+  }
+
   return (
     <div className="animate-fade-in">
-      <div className="page-header">
-        <h1 className="page-title">My Applications</h1>
-        <p className="page-subtitle">
-          Track all your job applications and interview progress in one place
-        </p>
+      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <h1 className="page-title">
+            My Applications {statusFilter && `- ${statusFilter}`}
+          </h1>
+          <p className="page-subtitle">
+            Track all your job applications and interview progress in one place
+          </p>
+        </div>
+        {statusFilter && (
+          <Link href="/dashboard/applicant/applications" className="btn btn-secondary btn-sm">
+            Clear Filter
+          </Link>
+        )}
       </div>
 
       {/* Stats Overview */}

@@ -56,24 +56,28 @@ export default async function ApplicantDashboard() {
       value: totalApps,
       icon: <FileText size={22} />,
       color: "purple",
+      href: "/dashboard/applicant/applications",
     },
     {
       label: "Under Review",
       value: reviewingApps,
       icon: <Clock size={22} />,
       color: "cyan",
+      href: "/dashboard/applicant/applications?status=REVIEWING",
     },
     {
       label: "Shortlisted",
       value: shortlistedApps,
       icon: <CheckCircle2 size={22} />,
       color: "emerald",
+      href: "/dashboard/applicant/applications?status=SHORTLISTED",
     },
     {
       label: "Rejected",
       value: rejectedApps,
       icon: <XCircle size={22} />,
       color: "amber",
+      href: "/dashboard/applicant/applications?status=REJECTED",
     },
   ];
 
@@ -140,11 +144,11 @@ export default async function ApplicantDashboard() {
       {/* Stats Grid */}
       <div className="grid-stats" style={{ marginBottom: "var(--space-8)" }}>
         {stats.map((stat, i) => (
-          <div key={i} className={`stat-card ${stat.color}`}>
+          <Link key={i} href={stat.href} className={`stat-card ${stat.color}`} style={{ textDecoration: "none" }}>
             <div className={`stat-icon ${stat.color}`}>{stat.icon}</div>
             <div className="stat-value">{stat.value}</div>
             <div className="stat-label">{stat.label}</div>
-          </div>
+          </Link>
         ))}
       </div>
 
