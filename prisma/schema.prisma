@@ -61,6 +61,7 @@ model User {
   image         String?
   passwordHash  String?
   role          Role     @default(APPLICANT)
+  isBlocked     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -70,6 +71,7 @@ model User {
   jobs          Job[]
   applications  Application[]
   preferences   RecruiterPreference[]
+  platformFeedback PlatformFeedback[]
 
   @@map("users")
 }
@@ -253,4 +255,27 @@ model VerificationToken {
   expires    DateTime
  
   @@unique([identifier, token])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String   @db.Text
+  adminId   String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model PlatformFeedback {
+  id                String   @id @default(cuid())
+  userId            String
+  feedback          String   @db.Text
+  rating            Int?
+  aiScreeningRating Int?
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("platform_feedback")
 }

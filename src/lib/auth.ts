@@ -29,8 +29,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: credentials.email as string },
         });
 
-        if (!user || !user.passwordHash) {
-          return null; // Ensure they have a password hash (not Google users)
+        if (!user || !user.passwordHash || user.isBlocked) {
+          return null; // Ensure they have a password hash and are not blocked
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -69,7 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email },
         });
 
-        if (!user) {
+        if (!user || user.isBlocked) {
           return null;
         }
 
@@ -117,6 +117,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }
   },
   callbacks: {
+    async signIn({ user }) {
+      if (user.email) {
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+        if (dbUser?.isBlocked) {
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

@@ -13,6 +13,7 @@ import {
   LogOut,
   Sparkles,
   Orbit,
+  MessageSquare,
 } from "lucide-react";
 
 export default async function DashboardLayout({
@@ -46,6 +47,12 @@ export default async function DashboardLayout({
       section: "AI Screening",
       links: [
         { href: "/dashboard/recruiter/applications", label: "AI Screening", icon: Sparkles },
+      ],
+    },
+    {
+      section: "Support",
+      links: [
+        { href: "/dashboard/recruiter/feedback", label: "Feedback", icon: MessageSquare },
       ],
     },
   ];
