@@ -77,6 +77,12 @@ export default async function DashboardLayout({
         { href: "/dashboard/applicant/profile", label: "My Profile", icon: User },
       ],
     },
+    {
+      section: "Support",
+      links: [
+        { href: "/dashboard/applicant/feedback", label: "Feedback", icon: MessageSquare },
+      ],
+    },
   ];
 
   const navSections = isRecruiter ? recruiterLinks : applicantLinks;
