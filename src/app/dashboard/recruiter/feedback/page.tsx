@@ -73,23 +73,20 @@ export default function FeedbackPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium">How do you rate our AI Screening? (0-10)</label>
-          <div className="flex flex-wrap gap-2">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
-              <button
-                key={score}
-                type="button"
-                onClick={() => setAiScreeningRating(score)}
-                className={`w-10 h-10 rounded-full font-medium transition-colors ${
-                  aiScreeningRating === score
-                    ? "bg-primary text-white"
-                    : "bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)] text-[var(--color-text-secondary)]"
-                }`}
-              >
+          <label htmlFor="aiScreening" className="block text-sm font-medium">How do you rate our AI Screening? (1-10)</label>
+          <select
+            id="aiScreening"
+            value={aiScreeningRating}
+            onChange={(e) => setAiScreeningRating(Number(e.target.value))}
+            className="w-full p-3 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] focus:ring-2 focus:ring-primary outline-none"
+          >
+            <option value={0} disabled>Select a rating...</option>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
+              <option key={score} value={score}>
                 {score}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
         <div className="space-y-2">
