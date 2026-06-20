@@ -187,7 +187,12 @@ export default async function RecruiterDashboard() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
             {recentApps.map((app) => (
-              <div key={app.id} className="application-card">
+              <Link
+                key={app.id}
+                href={`/dashboard/recruiter/jobs/${app.jobId}`}
+                className="application-card"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
                 <div className="avatar">
                   {app.applicant.name.charAt(0).toUpperCase()}
                 </div>
@@ -239,7 +244,7 @@ export default async function RecruiterDashboard() {
                     {app.status}
                   </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
