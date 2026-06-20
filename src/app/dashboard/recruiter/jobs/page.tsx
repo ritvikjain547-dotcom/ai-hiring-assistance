@@ -8,20 +8,35 @@ import {
   Clock,
 } from "lucide-react";
 
-export default async function RecruiterJobsPage() {
-  const jobs = await getRecruiterJobs();
+export default async function RecruiterJobsPage(props: {
+  searchParams?: Promise<{ status?: string }>;
+}) {
+  const searchParams = props.searchParams ? await props.searchParams : {};
+  const statusFilter = searchParams.status;
+
+  let jobs = await getRecruiterJobs();
+  if (statusFilter) {
+    jobs = jobs.filter((j) => j.status === statusFilter);
+  }
 
   return (
     <div className="animate-fade-in">
       <div className="page-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <div>
-          <h1 className="page-title">My Jobs</h1>
+          <h1 className="page-title">My Jobs {statusFilter && `- ${statusFilter}`}</h1>
           <p className="page-subtitle">Manage your job postings</p>
         </div>
-        <Link href="/dashboard/recruiter/jobs/new" className="btn btn-primary">
-          <Plus size={18} />
-          Post New Job
-        </Link>
+        <div style={{ display: "flex", gap: "var(--space-3)" }}>
+          {statusFilter && (
+            <Link href="/dashboard/recruiter/jobs" className="btn btn-secondary">
+              Clear Filter
+            </Link>
+          )}
+          <Link href="/dashboard/recruiter/jobs/new" className="btn btn-primary">
+            <Plus size={18} />
+            Post New Job
+          </Link>
+        </div>
       </div>
 
       {jobs.length === 0 ? (

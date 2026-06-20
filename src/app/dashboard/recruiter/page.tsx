@@ -57,24 +57,28 @@ export default async function RecruiterDashboard() {
       value: jobsCount,
       icon: <Briefcase size={22} />,
       color: "purple",
+      href: "/dashboard/recruiter/jobs",
     },
     {
       label: "Open Positions",
       value: openJobs,
       icon: <Clock size={22} />,
       color: "cyan",
+      href: "/dashboard/recruiter/jobs?status=OPEN",
     },
     {
       label: "Total Applications",
       value: applicationsCount,
       icon: <Users size={22} />,
       color: "amber",
+      href: "/dashboard/recruiter/applications",
     },
     {
       label: "Shortlisted",
       value: shortlistedCount,
       icon: <UserCheck size={22} />,
       color: "emerald",
+      href: "/dashboard/recruiter/applications?status=SHORTLISTED",
     },
   ];
 
@@ -98,11 +102,11 @@ export default async function RecruiterDashboard() {
       {/* Stats Grid */}
       <div className="grid-stats" style={{ marginBottom: "var(--space-6)" }}>
         {stats.map((stat, i) => (
-          <div key={i} className={`stat-card ${stat.color}`}>
+          <Link key={i} href={stat.href} className={`stat-card ${stat.color}`} style={{ textDecoration: "none" }}>
             <div className={`stat-icon ${stat.color}`}>{stat.icon}</div>
             <div className="stat-value">{stat.value}</div>
             <div className="stat-label">{stat.label}</div>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -128,21 +132,21 @@ export default async function RecruiterDashboard() {
           </div>
 
           <div className="ai-classification-stats">
-            <div className="ai-class-stat matching">
+            <Link href="/dashboard/recruiter/applications?classification=MATCHING" className="ai-class-stat matching" style={{ textDecoration: "none" }}>
               <CheckCircle2 size={18} />
               <span className="ai-class-stat-value">{matchingCount}</span>
               <span className="ai-class-stat-label">Matching</span>
-            </div>
-            <div className="ai-class-stat near">
+            </Link>
+            <Link href="/dashboard/recruiter/applications?classification=NEAR_BOUND" className="ai-class-stat near" style={{ textDecoration: "none" }}>
               <AlertTriangle size={18} />
               <span className="ai-class-stat-value">{nearBoundCount}</span>
               <span className="ai-class-stat-label">Near Bound</span>
-            </div>
-            <div className="ai-class-stat not-matching">
+            </Link>
+            <Link href="/dashboard/recruiter/applications?classification=NOT_MATCHING" className="ai-class-stat not-matching" style={{ textDecoration: "none" }}>
               <XCircle size={18} />
               <span className="ai-class-stat-value">{notMatchingCount}</span>
               <span className="ai-class-stat-label">Not Matching</span>
-            </div>
+            </Link>
           </div>
         </div>
       )}
