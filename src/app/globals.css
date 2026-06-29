@@ -3703,6 +3703,9 @@ details summary::-webkit-details-marker {
   border-radius: var(--radius-2xl);
   width: 100%;
   max-width: 520px;
+  max-height: calc(100vh - var(--space-8));
+  display: flex;
+  flex-direction: column;
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(99, 102, 241, 0.05);
@@ -3716,6 +3719,7 @@ details summary::-webkit-details-marker {
   justify-content: space-between;
   padding: var(--space-5) var(--space-6);
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .review-modal-icon {
@@ -3798,6 +3802,9 @@ details summary::-webkit-details-marker {
 
 .review-modal-body {
   padding: var(--space-5) var(--space-6);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .review-modal-label {
@@ -3825,6 +3832,7 @@ details summary::-webkit-details-marker {
   padding: var(--space-4) var(--space-6);
   border-top: 1px solid var(--color-border);
   background: rgba(0, 0, 0, 0.02);
+  flex-shrink: 0;
 }
 
 /* ============================================
