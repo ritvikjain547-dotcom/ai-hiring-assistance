@@ -420,6 +420,7 @@ export async function sendAiDecisionEmail(
 
 /**
  * Send interview scheduled email to applicant with date/time details.
+ * Optionally includes info about the previous round that was cleared.
  */
 export async function sendInterviewScheduledEmail(
   name: string,
@@ -430,7 +431,11 @@ export async function sendInterviewScheduledEmail(
   roundNumber: number,
   scheduledDate: Date,
   interviewLink?: string | null,
-  interviewInfo?: string | null
+  interviewInfo?: string | null,
+  clearedRound?: {
+    roundName: string;
+    roundNumber: number;
+  } | null
 ) {
   const formattedDate = scheduledDate.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -444,12 +449,35 @@ export async function sendInterviewScheduledEmail(
     hour12: true,
   });
 
-  const subject = `📅 Interview Scheduled: ${roundName} for ${jobTitle} at ${company}`;
-  const content = `
-    <span class="badge badge-applied">Interview Scheduled</span>
-    <p>Dear ${name},</p>
+  // Build subject with cleared round context
+  const subject = clearedRound
+    ? `🎉 ${clearedRound.roundName} Cleared + Interview Scheduled: ${roundName} for ${jobTitle} at ${company}`
+    : `📅 Interview Scheduled: ${roundName} for ${jobTitle} at ${company}`;
+
+  // Build cleared round banner
+  const clearedRoundSection = clearedRound ? `
+    <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin: 0 0 24px; text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 6px;">🎉✅🏅</div>
+      <div style="font-size: 16px; font-weight: 700; color: #15803d;">
+        ${clearedRound.roundName} (Round ${clearedRound.roundNumber}) — Cleared!
+      </div>
+      <div style="font-size: 13px; color: #166534; margin-top: 6px;">
+        Congratulations! You have successfully passed this round.
+      </div>
+    </div>
+    <p>Great news, ${name}! You have cleared <strong>${clearedRound.roundName} (Round ${clearedRound.roundNumber})</strong> for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>. You are now advancing to the next stage.</p>
+  ` : `
     <p>We are pleased to inform you that your interview for the <strong>${jobTitle}</strong> position at <strong>${company}</strong> has been scheduled.</p>
+  `;
+
+  const content = `
+    <span class="badge badge-applied">${clearedRound ? 'Round Cleared + Interview Scheduled' : 'Interview Scheduled'}</span>
+    <p>Dear ${name},</p>
+    ${clearedRoundSection}
     <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+      <div style="font-size: 11px; color: #60a5fa; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;">
+        ${clearedRound ? '📅 Next Interview' : 'Scheduled Interview'}
+      </div>
       <div style="font-size: 14px; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
         ${roundName} (Round ${roundNumber})
       </div>

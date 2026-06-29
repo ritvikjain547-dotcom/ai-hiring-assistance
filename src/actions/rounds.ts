@@ -210,13 +210,14 @@ export async function scheduleRound(
     return { error: "Unauthorized" };
   }
 
-  const round = await prisma.interviewRound.findUnique({
+   const round = await prisma.interviewRound.findUnique({
     where: { id: roundId },
     include: {
       application: {
         include: {
           job: true,
           applicant: { select: { name: true, email: true } },
+          interviewRounds: { orderBy: { roundNumber: "asc" } },
         },
       },
     },
@@ -247,6 +248,15 @@ export async function scheduleRound(
   const applicant = round.application.applicant;
   const job = round.application.job;
 
+  // Check if the previous round was cleared to include in the email
+  const previousRound = round.application.interviewRounds.find(
+    (r) => r.roundNumber === round.roundNumber - 1
+  );
+  const clearedRound =
+    previousRound && previousRound.status === "PASSED"
+      ? { roundName: previousRound.roundName, roundNumber: previousRound.roundNumber }
+      : null;
+
   // Send interview scheduled email directly (not in after() for reliability)
   try {
     await sendInterviewScheduledEmail(
@@ -258,7 +268,8 @@ export async function scheduleRound(
       round.roundNumber,
       dateObj,
       interviewLink?.trim() || null,
-      interviewInfo?.trim() || null
+      interviewInfo?.trim() || null,
+      clearedRound
     );
   } catch (err) {
     console.error("Failed to send interview scheduled email:", err);
