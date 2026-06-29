@@ -24,6 +24,7 @@ export function OverrideConfirmDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>("");
   const [reAnalyzing, setReAnalyzing] = useState(false);
 
   async function handleStatusChange(newStatus: string) {
@@ -39,7 +40,9 @@ export function OverrideConfirmDialog({
     } else {
       // Direct action — no confirmation needed
       setLoading(true);
-      await updateApplicationStatus(applicationId, newStatus);
+      await updateApplicationStatus(applicationId, newStatus, {
+        startDate: newStatus === "HIRED" ? startDate : undefined,
+      });
       setLoading(false);
       router.refresh();
     }
@@ -48,7 +51,9 @@ export function OverrideConfirmDialog({
   async function handleConfirmedOverride() {
     if (!selectedAction) return;
     setLoading(true);
-    await updateApplicationStatus(applicationId, selectedAction);
+    await updateApplicationStatus(applicationId, selectedAction, {
+      startDate: selectedAction === "HIRED" ? startDate : undefined,
+    });
     setLoading(false);
     setIsOpen(false);
     router.refresh();
@@ -167,6 +172,24 @@ export function OverrideConfirmDialog({
                 This action overrides the AI&apos;s recommendation. The application will be marked
                 as &quot;Recruiter Override&quot; for audit tracking.
               </div>
+
+              {selectedAction === "HIRED" && (
+                <div style={{ marginTop: "var(--space-4)" }}>
+                  <label className="form-label">
+                    Proposed Start Date
+                    <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>
+                      {" "}(will be included in the offer letter)
+                    </span>
+                  </label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="modal-footer">

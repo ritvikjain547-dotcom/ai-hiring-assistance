@@ -72,7 +72,8 @@ export async function updateRoundStatus(
   roundId: string,
   status: string,
   review?: string,
-  feedback?: string
+  feedback?: string,
+  startDate?: string
 ) {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== "RECRUITER") {
@@ -136,6 +137,7 @@ export async function updateRoundStatus(
     data: {
       currentRound: passedCount,
       ...(applicationStatus ? { status: applicationStatus as any } : {}),
+      ...(applicationStatus === "HIRED" && startDate ? { startDate: new Date(startDate) } : {}),
     },
   });
 
@@ -159,6 +161,7 @@ export async function updateRoundStatus(
               employmentType: job.employmentType,
               location: job.location,
               locationType: job.locationType,
+              startDate: startDate || null,
             }
           );
         } else {

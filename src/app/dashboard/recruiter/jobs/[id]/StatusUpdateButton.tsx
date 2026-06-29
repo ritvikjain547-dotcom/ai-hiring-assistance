@@ -16,6 +16,7 @@ export function StatusUpdateButton({
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [startDate, setStartDate] = useState("");
 
   async function handleStatusChange(status: string) {
     // For reject/hire, show feedback form first
@@ -30,11 +31,13 @@ export function StatusUpdateButton({
       rejectionReason: status === "REJECTED" ? reason : undefined,
       approvalNotes: status === "HIRED" ? reason : undefined,
       recruiterFeedback: feedback || undefined,
+      startDate: status === "HIRED" ? startDate : undefined,
     });
     setShowFeedback(false);
     setPendingAction(null);
     setReason("");
     setFeedback("");
+    setStartDate("");
     setLoading(false);
   }
 
@@ -45,11 +48,13 @@ export function StatusUpdateButton({
       rejectionReason: pendingAction === "REJECTED" ? reason : undefined,
       approvalNotes: pendingAction === "HIRED" ? reason : undefined,
       recruiterFeedback: feedback || undefined,
+      startDate: pendingAction === "HIRED" ? startDate : undefined,
     });
     setShowFeedback(false);
     setPendingAction(null);
     setReason("");
     setFeedback("");
+    setStartDate("");
     setLoading(false);
   }
 
@@ -89,6 +94,23 @@ export function StatusUpdateButton({
           rows={2}
           style={{ fontSize: "var(--text-xs)", padding: "6px 8px" }}
         />
+        
+        {pendingAction === "HIRED" && (
+          <div style={{ marginTop: "4px" }}>
+            <div style={{ fontSize: "var(--text-xs)", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "4px" }}>
+              Proposed Start Date
+            </div>
+            <input
+              type="date"
+              className="form-input"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
+              style={{ fontSize: "var(--text-xs)", padding: "6px 8px", width: "100%" }}
+            />
+          </div>
+        )}
+
         <div style={{ display: "flex", gap: "var(--space-2)", justifyContent: "flex-end" }}>
           <button
             onClick={() => { setShowFeedback(false); setPendingAction(null); }}

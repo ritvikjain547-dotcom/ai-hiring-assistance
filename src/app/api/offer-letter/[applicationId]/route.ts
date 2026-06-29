@@ -51,6 +51,7 @@ export async function GET(
       employmentType: application.job.employmentType,
       location: application.job.location,
       locationType: application.job.locationType,
+      startDate: application.startDate ? new Date(application.startDate).toISOString().split('T')[0] : undefined,
       totalRoundsCleared: application.totalRounds || undefined,
     });
 

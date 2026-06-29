@@ -337,6 +337,7 @@ export async function updateApplicationStatus(
     rejectionReason?: string;
     approvalNotes?: string;
     recruiterFeedback?: string;
+    startDate?: string;
   }
 ) {
   const session = await auth();
@@ -370,6 +371,7 @@ export async function updateApplicationStatus(
       ...(options?.rejectionReason !== undefined ? { rejectionReason: options.rejectionReason } : {}),
       ...(options?.approvalNotes !== undefined ? { approvalNotes: options.approvalNotes } : {}),
       ...(options?.recruiterFeedback !== undefined ? { recruiterFeedback: options.recruiterFeedback } : {}),
+      ...(status === "HIRED" && options?.startDate ? { startDate: new Date(options.startDate) } : {}),
     },
   });
 
@@ -393,6 +395,7 @@ export async function updateApplicationStatus(
               employmentType: application.job.employmentType,
               location: application.job.location,
               locationType: application.job.locationType,
+              startDate: options?.startDate || null,
             } : undefined
           );
         }

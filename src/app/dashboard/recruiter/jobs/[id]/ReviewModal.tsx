@@ -26,6 +26,7 @@ export function ReviewModal({
   onClose,
 }: ReviewModalProps) {
   const [review, setReview] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [loading, setLoading] = useState(false);
 
   const isSelected = action === "PASSED";
@@ -42,7 +43,7 @@ export function ReviewModal({
 
   async function handleSubmit() {
     setLoading(true);
-    await updateRoundStatus(roundId, action, review || undefined);
+    await updateRoundStatus(roundId, action, review || undefined, undefined, startDate || undefined);
     setLoading(false);
     onClose();
   }
@@ -98,6 +99,24 @@ export function ReviewModal({
             rows={4}
             autoFocus
           />
+
+          {isHire && (
+            <div style={{ marginTop: "var(--space-4)" }}>
+              <label className="review-modal-label">
+                Proposed Start Date
+                <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>
+                  {" "}(will be included in the offer letter)
+                </span>
+              </label>
+              <input
+                type="date"
+                className="form-input"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+          )}
         </div>
 
         {/* Actions */}

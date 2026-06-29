@@ -212,6 +212,7 @@ export async function sendStatusUpdateEmail(
     employmentType?: string;
     location?: string;
     locationType?: string;
+    startDate?: string | null;
   }
 ) {
   let badgeClass = 'badge-welcome';
@@ -292,6 +293,7 @@ export async function sendStatusUpdateEmail(
         employmentType: jobDetails?.employmentType,
         location: jobDetails?.location,
         locationType: jobDetails?.locationType,
+        startDate: jobDetails?.startDate || undefined,
       });
       attachments = [{
         filename: `Offer_Letter_${name.replace(/\s+/g, '_')}_${jobTitle.replace(/\s+/g, '_')}.pdf`,
@@ -585,6 +587,7 @@ export async function sendFinalOfferEmail(
     employmentType?: string;
     location?: string;
     locationType?: string;
+    startDate?: string | null;
   }
 ) {
   const subject = `🏆 Offer Letter: Congratulations on the ${jobTitle} position at ${company}!`;
@@ -623,6 +626,7 @@ export async function sendFinalOfferEmail(
       employmentType: jobDetails?.employmentType,
       location: jobDetails?.location,
       locationType: jobDetails?.locationType,
+      startDate: jobDetails?.startDate || undefined,
     });
     attachments = [{
       filename: `Offer_Letter_${name.replace(/\s+/g, '_')}_${jobTitle.replace(/\s+/g, '_')}.pdf`,
