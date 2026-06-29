@@ -26,21 +26,27 @@ const proxyHandler = auth((req) => {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  // Role-based access control
-  if (isRecruiterRoute && userRole !== "RECRUITER") {
-    return NextResponse.redirect(new URL("/dashboard/applicant", nextUrl));
-  }
+  // Handle logged-in users on dashboard routes
+  if (isDashboard && isLoggedIn) {
+    // If the role is missing, default to APPLICANT to prevent infinite loops, 
+    // or you could redirect to a setup page.
+    const role = userRole || "APPLICANT";
 
-  if (isApplicantRoute && userRole !== "APPLICANT") {
-    return NextResponse.redirect(new URL("/dashboard/recruiter", nextUrl));
-  }
+    if (isRecruiterRoute && role !== "RECRUITER") {
+      return NextResponse.redirect(new URL("/dashboard/applicant", nextUrl));
+    }
 
-  // Redirect /dashboard to role-specific dashboard
-  if (nextUrl.pathname === "/dashboard" && isLoggedIn) {
-    if (userRole === "RECRUITER") {
+    if (isApplicantRoute && role !== "APPLICANT") {
       return NextResponse.redirect(new URL("/dashboard/recruiter", nextUrl));
     }
-    return NextResponse.redirect(new URL("/dashboard/applicant", nextUrl));
+
+    // Redirect generic /dashboard to role-specific dashboard
+    if (nextUrl.pathname === "/dashboard") {
+      if (role === "RECRUITER") {
+        return NextResponse.redirect(new URL("/dashboard/recruiter", nextUrl));
+      }
+      return NextResponse.redirect(new URL("/dashboard/applicant", nextUrl));
+    }
   }
 
   return NextResponse.next();

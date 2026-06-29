@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma as any),
   providers: [
     GoogleProvider({
