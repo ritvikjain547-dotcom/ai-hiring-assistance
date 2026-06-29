@@ -218,6 +218,25 @@ export default async function MyApplicationsPage(props: {
                   </div>
                 )}
 
+                {app.status === "HIRED" && (
+                  <div className="app-decision-card" style={{ background: 'var(--color-bg-hired, rgba(16, 185, 129, 0.1))', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
+                    <div className="app-decision-header" style={{ color: '#059669' }}>
+                      <span>🏆 Congratulations, you have been hired!</span>
+                    </div>
+                    <p className="app-decision-text" style={{ marginBottom: '16px' }}>
+                      We are excited to offer you the position of {app.job.title} at {app.job.company}. Please download and review your formal offer letter.
+                    </p>
+                    <a 
+                      href={`/api/offer-letter/${app.id}`}
+                      className="btn btn-primary btn-sm"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Download Offer Letter (PDF)
+                    </a>
+                  </div>
+                )}
+
                 {app.status === "HIRED" && app.approvalNotes && (
                   <div className="app-decision-card app-decision-hired">
                     <div className="app-decision-header">
