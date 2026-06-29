@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["bcryptjs", "pdf-parse", "pdf2json", "mammoth"],
+  serverExternalPackages: ["bcryptjs", "pdf-parse", "pdf2json", "mammoth", "pdfkit"],
   typescript: {
     ignoreBuildErrors: true,
   },
