@@ -191,6 +191,7 @@ export async function generateOfferLetterPDF(data: OfferLetterData): Promise<Buf
         detailY += lineHeight;
       }
 
+      doc.x = doc.page.margins.left;
       doc.y = boxTop + boxHeight + 16;
 
       // Terms section
@@ -200,6 +201,8 @@ export async function generateOfferLetterPDF(data: OfferLetterData): Promise<Buf
         .font('Helvetica')
         .text(
           'This offer is contingent upon the successful completion of background verification and any other pre-employment checks as required by company policy. The detailed terms and conditions of your employment, including benefits, leave policies, and other specifics, will be outlined in a separate employment agreement that will be provided to you upon acceptance of this offer.',
+          doc.page.margins.left,
+          doc.y,
           { lineGap: 4, width: pageWidth }
         );
 
