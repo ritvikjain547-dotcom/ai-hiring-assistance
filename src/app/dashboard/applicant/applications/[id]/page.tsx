@@ -171,11 +171,6 @@ export default async function ApplicantApplicationDetailPage({
           <div className="app-ai-summary">
             <div className="app-ai-summary-header">
               <span>🤖 AI Analysis</span>
-              {application.aiScore !== null && (
-                <span className="app-ai-score">
-                  Score: {Math.round((application.aiScore || 0) * 100)}%
-                </span>
-              )}
             </div>
             <p className="app-ai-summary-text">{application.aiOverallSummary}</p>
           </div>

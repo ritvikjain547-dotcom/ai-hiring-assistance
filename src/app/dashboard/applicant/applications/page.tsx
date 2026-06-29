@@ -244,11 +244,6 @@ export default async function MyApplicationsPage(props: {
                   <div className="app-ai-summary">
                     <div className="app-ai-summary-header">
                       <span>🤖 AI Analysis</span>
-                      {app.aiScore !== null && (
-                        <span className="app-ai-score">
-                          Score: {Math.round((app.aiScore || 0) * 100)}%
-                        </span>
-                      )}
                     </div>
                     <p className="app-ai-summary-text">{app.aiOverallSummary}</p>
                   </div>
