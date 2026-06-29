@@ -13,13 +13,15 @@ import {
 export default async function ApplicantJobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; locationType?: string; employmentType?: string }>;
+  searchParams: Promise<{ search?: string; locationType?: string; employmentType?: string; location?: string; minSalary?: string }>;
 }) {
   const params = await searchParams;
   const jobs = await getAllJobs(
     params.search,
     params.locationType,
-    params.employmentType
+    params.employmentType,
+    params.location,
+    params.minSalary
   );
 
   return (
@@ -32,8 +34,8 @@ export default async function ApplicantJobsPage({
       </div>
 
       {/* Filters */}
-      <form className="filters-bar">
-        <div className="search-input-wrapper">
+      <form className="filters-bar" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        <div className="search-input-wrapper" style={{ flex: '1 1 250px' }}>
           <Search size={16} />
           <input
             name="search"
@@ -44,10 +46,33 @@ export default async function ApplicantJobsPage({
           />
         </div>
 
+        <div className="search-input-wrapper" style={{ flex: '1 1 150px' }}>
+          <MapPin size={16} />
+          <input
+            name="location"
+            type="text"
+            className="search-input"
+            placeholder="City, State, or Country"
+            defaultValue={params.location || ""}
+          />
+        </div>
+
+        <div className="search-input-wrapper" style={{ flex: '1 1 150px' }}>
+          <DollarSign size={16} />
+          <input
+            name="minSalary"
+            type="number"
+            className="search-input"
+            placeholder="Min Salary (e.g. 50000)"
+            defaultValue={params.minSalary || ""}
+          />
+        </div>
+
         <select
           name="locationType"
           className="filter-select"
           defaultValue={params.locationType || "ALL"}
+          style={{ flex: '1 1 120px' }}
         >
           <option value="ALL">All Locations</option>
           <option value="REMOTE">Remote</option>
@@ -59,6 +84,7 @@ export default async function ApplicantJobsPage({
           name="employmentType"
           className="filter-select"
           defaultValue={params.employmentType || "ALL"}
+          style={{ flex: '1 1 120px' }}
         >
           <option value="ALL">All Types</option>
           <option value="FULL_TIME">Full Time</option>
@@ -67,7 +93,7 @@ export default async function ApplicantJobsPage({
           <option value="INTERNSHIP">Internship</option>
         </select>
 
-        <button type="submit" className="btn btn-primary btn-sm">
+        <button type="submit" className="btn btn-primary btn-sm" style={{ flex: '1 1 100px', padding: '10px' }}>
           <Search size={14} />
           Search
         </button>

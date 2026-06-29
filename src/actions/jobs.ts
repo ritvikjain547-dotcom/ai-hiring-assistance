@@ -159,7 +159,13 @@ export async function getJobById(jobId: string) {
   });
 }
 
-export async function getAllJobs(search?: string, locationType?: string, employmentType?: string) {
+export async function getAllJobs(
+  search?: string,
+  locationType?: string,
+  employmentType?: string,
+  location?: string,
+  minSalary?: string
+) {
   const where: any = { status: "OPEN" };
 
   if (search) {
@@ -176,6 +182,14 @@ export async function getAllJobs(search?: string, locationType?: string, employm
 
   if (employmentType && employmentType !== "ALL") {
     where.employmentType = employmentType;
+  }
+
+  if (location && location.trim() !== "") {
+    where.location = { contains: location.trim() };
+  }
+
+  if (minSalary && !isNaN(parseInt(minSalary))) {
+    where.salaryMin = { gte: parseInt(minSalary) };
   }
 
   return prisma.job.findMany({

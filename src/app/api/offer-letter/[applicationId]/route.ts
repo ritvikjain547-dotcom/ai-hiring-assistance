@@ -57,7 +57,7 @@ export async function GET(
     // Return the PDF as a downloadable file
     const fileName = `Offer_Letter_${application.job.company.replace(/\s+/g, "_")}_${application.job.title.replace(/\s+/g, "_")}.pdf`;
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
