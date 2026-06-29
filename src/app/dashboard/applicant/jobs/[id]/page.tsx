@@ -8,6 +8,7 @@ import {
   MapPin,
   Clock,
   DollarSign,
+  IndianRupee,
   Users,
   Calendar,
   Briefcase,
@@ -93,7 +94,8 @@ export default async function ApplicantJobDetailPage({
           </span>
           {job.salaryMin && job.salaryMax && (
             <span style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", color: "var(--color-accent-success)" }}>
-              <DollarSign size={14} /> ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}
+              {job.salaryCurrency === "INR" ? <IndianRupee size={14} /> : <DollarSign size={14} />}
+              {job.salaryCurrency === "INR" ? "₹" : "$"}{job.salaryMin.toLocaleString()} - {job.salaryCurrency === "INR" ? "₹" : "$"}{job.salaryMax.toLocaleString()}
             </span>
           )}
         </div>

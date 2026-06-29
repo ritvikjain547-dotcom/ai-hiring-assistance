@@ -17,5 +17,4 @@ async function test() {
     console.error("Details:", JSON.stringify(err.errorDetails, null, 2));
   }
 }
-
 test();

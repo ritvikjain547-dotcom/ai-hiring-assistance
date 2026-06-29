@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { generateOfferLetterPDF, type OfferLetterData } from './offerLetterGenerator';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || '',
@@ -14,9 +15,14 @@ interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  attachments?: {
+    filename: string;
+    content: Buffer;
+    contentType?: string;
+  }[];
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailParams) {
+export async function sendEmail({ to, subject, html, attachments }: SendEmailParams) {
   const from = process.env.SMTP_FROM || '"AI Hiring Portal" <no-reply@hiringportal.com>';
 
   const isSmtpConfigured =
@@ -29,6 +35,9 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
     console.log(`[EMAIL DISPATCH (DEV FALLBACK - SMTP NOT CONFIGURED)]`);
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
+    if (attachments?.length) {
+      console.log(`Attachments: ${attachments.map(a => `${a.filename} (${(a.content.length / 1024).toFixed(1)}KB)`).join(', ')}`);
+    }
     console.log(`------------------------------------------------------------`);
     // Basic text representation
     console.log(html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 500) + '...');
@@ -42,6 +51,11 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
       to,
       subject,
       html,
+      attachments: attachments?.map(a => ({
+        filename: a.filename,
+        content: a.content,
+        contentType: a.contentType || 'application/pdf',
+      })),
     });
     console.log(`Email sent successfully: ${info.messageId}`);
     return { success: true, messageId: info.messageId };
@@ -190,7 +204,15 @@ export async function sendStatusUpdateEmail(
   email: string,
   jobTitle: string,
   company: string,
-  status: 'REVIEWING' | 'SHORTLISTED' | 'REJECTED' | 'HIRED'
+  status: 'REVIEWING' | 'SHORTLISTED' | 'REJECTED' | 'HIRED',
+  jobDetails?: {
+    salaryMin?: number | null;
+    salaryMax?: number | null;
+    salaryCurrency?: string | null;
+    employmentType?: string;
+    location?: string;
+    locationType?: string;
+  }
 ) {
   let badgeClass = 'badge-welcome';
   let badgeText: string = status;
@@ -234,7 +256,12 @@ export async function sendStatusUpdateEmail(
       bodyContent = `
         <p>We are absolutely delighted to offer you the position of <strong>${jobTitle}</strong> at <strong>${company}</strong>!</p>
         <p>Your qualifications and interviews stood out, and we believe you will be a fantastic addition to our team.</p>
-        <p>Our onboarding team will contact you shortly with the formal offer letter, contract details, and next steps for your onboarding.</p>
+        <div style="background: linear-gradient(135deg, #fae8ff, #e0e7ff); border: 1px solid #c084fc; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+          <div style="font-size: 28px; margin-bottom: 6px;">🎉📄🏆</div>
+          <div style="font-size: 16px; font-weight: 700; color: #6d28d9;">Your Offer Letter is Attached!</div>
+          <div style="font-size: 12px; color: #7c3aed; margin-top: 4px;">Please find the formal offer letter attached to this email as a PDF.</div>
+        </div>
+        <p>Please review the attached offer letter carefully. Our onboarding team will follow up shortly with contract details and next steps for your onboarding.</p>
         <p>Welcome aboard! We look forward to working with you.</p>
       `;
       break;
@@ -250,7 +277,33 @@ export async function sendStatusUpdateEmail(
     <p>Best regards,<br>${company} Hiring Team</p>
   `;
   const html = getEmailWrapper(subject, content);
-  return sendEmail({ to: email, subject, html });
+
+  // Generate offer letter PDF attachment for HIRED status
+  let attachments: { filename: string; content: Buffer; contentType: string }[] | undefined;
+  if (status === 'HIRED') {
+    try {
+      const offerPdf = await generateOfferLetterPDF({
+        candidateName: name,
+        jobTitle,
+        company,
+        salaryMin: jobDetails?.salaryMin,
+        salaryMax: jobDetails?.salaryMax,
+        salaryCurrency: jobDetails?.salaryCurrency,
+        employmentType: jobDetails?.employmentType,
+        location: jobDetails?.location,
+        locationType: jobDetails?.locationType,
+      });
+      attachments = [{
+        filename: `Offer_Letter_${name.replace(/\s+/g, '_')}_${jobTitle.replace(/\s+/g, '_')}.pdf`,
+        content: offerPdf,
+        contentType: 'application/pdf',
+      }];
+    } catch (err) {
+      console.error('Failed to generate offer letter PDF for status update email:', err);
+    }
+  }
+
+  return sendEmail({ to: email, subject, html, attachments });
 }
 
 export async function sendOTPEmail(email: string, otp: string) {
@@ -365,4 +418,192 @@ export async function sendAiDecisionEmail(
   return sendEmail({ to: email, subject, html });
 }
 
+/**
+ * Send interview scheduled email to applicant with date/time details.
+ */
+export async function sendInterviewScheduledEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  roundName: string,
+  roundNumber: number,
+  scheduledDate: Date,
+  interviewLink?: string | null,
+  interviewInfo?: string | null
+) {
+  const formattedDate = scheduledDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const formattedTime = scheduledDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
 
+  const subject = `📅 Interview Scheduled: ${roundName} for ${jobTitle} at ${company}`;
+  const content = `
+    <span class="badge badge-applied">Interview Scheduled</span>
+    <p>Dear ${name},</p>
+    <p>We are pleased to inform you that your interview for the <strong>${jobTitle}</strong> position at <strong>${company}</strong> has been scheduled.</p>
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+      <div style="font-size: 14px; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+        ${roundName} (Round ${roundNumber})
+      </div>
+      <div style="font-size: 24px; font-weight: 800; color: #1e40af; margin-bottom: 4px;">
+        ${formattedDate}
+      </div>
+      <div style="font-size: 18px; font-weight: 600; color: #2563eb;">
+        ${formattedTime}
+      </div>
+    </div>
+    ${interviewLink ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 4px;">
+      <p style="margin-top: 0; font-weight: bold; color: #1e293b;">Interview Link:</p>
+      <a href="${interviewLink}" style="color: #2563eb; text-decoration: underline; word-break: break-all;">${interviewLink}</a>
+    </div>
+    ` : ''}
+    ${interviewInfo ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #f8fafc; border-left: 4px solid #8b5cf6; border-radius: 4px;">
+      <p style="margin-top: 0; font-weight: bold; color: #1e293b;">Additional Information from Recruiter:</p>
+      <p style="margin-bottom: 0; color: #334155; white-space: pre-wrap;">${interviewInfo}</p>
+    </div>
+    ` : ''}
+    <p>Please make sure to be available at the scheduled time. You can check your dashboard for any updates or changes.</p>
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/applicant/applications" class="button">View Dashboard</a>
+    </div>
+    <p>Best of luck!</p>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+/**
+ * Send round advance email — applicant passed a round and is moving to the next.
+ */
+export async function sendRoundAdvanceEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  passedRoundName: string,
+  passedRoundNumber: number,
+  nextRoundName: string | null
+) {
+  const subject = `🎉 Congratulations! You passed ${passedRoundName} for ${jobTitle} at ${company}`;
+  const content = `
+    <span class="badge badge-shortlisted">Round Cleared</span>
+    <p>Dear ${name},</p>
+    <p>Great news! You have successfully cleared <strong>${passedRoundName} (Round ${passedRoundNumber})</strong> for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+    ${nextRoundName ? `
+    <p>You are now advancing to the next stage: <strong>${nextRoundName}</strong>. Our team will reach out shortly with further details and scheduling.</p>
+    ` : `
+    <p>Our team will be in touch shortly regarding the next steps.</p>
+    `}
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/applicant/applications" class="button">Track Progress</a>
+    </div>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+/**
+ * Send round rejection email — applicant did not pass a particular round.
+ */
+export async function sendRoundRejectionEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  roundName: string,
+  roundNumber: number
+) {
+  const subject = `Application Update: ${jobTitle} at ${company}`;
+  const content = `
+    <span class="badge badge-rejected">Round Update</span>
+    <p>Dear ${name},</p>
+    <p>Thank you for your participation in the interview process for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+    <p>After careful evaluation of <strong>${roundName} (Round ${roundNumber})</strong>, we regret to inform you that we will not be advancing your application further at this time.</p>
+    <p>We appreciate the time and effort you invested. We encourage you to explore other opportunities on our platform that may be a great fit for your skills.</p>
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/applicant/applications" class="button">View Dashboard</a>
+    </div>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+/**
+ * Send final offer email — applicant passed all rounds.
+ */
+export async function sendFinalOfferEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  totalRounds: number,
+  jobDetails?: {
+    salaryMin?: number | null;
+    salaryMax?: number | null;
+    salaryCurrency?: string | null;
+    employmentType?: string;
+    location?: string;
+    locationType?: string;
+  }
+) {
+  const subject = `🏆 Offer Letter: Congratulations on the ${jobTitle} position at ${company}!`;
+  const content = `
+    <span class="badge badge-hired">Offer Letter</span>
+    <p>Dear ${name},</p>
+    <p>We are absolutely thrilled to extend you an offer for the position of <strong>${jobTitle}</strong> at <strong>${company}</strong>!</p>
+    <div style="background: linear-gradient(135deg, #fae8ff, #e0e7ff); border: 1px solid #c084fc; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+      <div style="font-size: 32px; margin-bottom: 8px;">🎉🏆🎊</div>
+      <div style="font-size: 20px; font-weight: 800; color: #6d28d9;">
+        You cleared all ${totalRounds} interview rounds!
+      </div>
+      <div style="font-size: 13px; color: #7c3aed; margin-top: 8px;">📄 Your formal offer letter is attached to this email</div>
+    </div>
+    <p>Your talent, skills, and performance throughout the interview process truly stood out. We are confident you will be a fantastic addition to our team.</p>
+    <p>Please review the attached offer letter carefully. Our onboarding team will be reaching out shortly with contract details and next steps for your onboarding process.</p>
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/applicant/applications" class="button">View Dashboard</a>
+    </div>
+    <p>Welcome aboard! 🎉</p>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+
+  // Generate PDF offer letter attachment
+  let attachments: { filename: string; content: Buffer; contentType: string }[] | undefined;
+  try {
+    const offerPdf = await generateOfferLetterPDF({
+      candidateName: name,
+      jobTitle,
+      company,
+      totalRoundsCleared: totalRounds,
+      salaryMin: jobDetails?.salaryMin,
+      salaryMax: jobDetails?.salaryMax,
+      salaryCurrency: jobDetails?.salaryCurrency,
+      employmentType: jobDetails?.employmentType,
+      location: jobDetails?.location,
+      locationType: jobDetails?.locationType,
+    });
+    attachments = [{
+      filename: `Offer_Letter_${name.replace(/\s+/g, '_')}_${jobTitle.replace(/\s+/g, '_')}.pdf`,
+      content: offerPdf,
+      contentType: 'application/pdf',
+    }];
+  } catch (err) {
+    console.error('Failed to generate offer letter PDF:', err);
+  }
+
+  return sendEmail({ to: email, subject, html, attachments });
+}

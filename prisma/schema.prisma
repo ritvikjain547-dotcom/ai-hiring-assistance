@@ -53,6 +53,11 @@ enum RoundStatus {
   FAILED
 }
 
+enum RecruiterType {
+  COMPANY_HR
+  AGENCY
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
@@ -62,6 +67,8 @@ model User {
   passwordHash  String?
   role          Role     @default(APPLICANT)
   isBlocked     Boolean  @default(false)
+  recruiterType RecruiterType?
+  companyName   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -72,6 +79,7 @@ model User {
   applications  Application[]
   preferences   RecruiterPreference[]
   platformFeedback PlatformFeedback[]
+  recruiterCompanies RecruiterCompany[]
 
   @@map("users")
 }
@@ -205,8 +213,13 @@ model InterviewRound {
   roundName     String
   status        RoundStatus @default(PENDING)
   scheduledAt   DateTime?
+  scheduledDate DateTime?
   completedAt   DateTime?
   feedback      String?     @db.Text
+  review        String?     @db.Text
+  reviewedAt    DateTime?
+  interviewLink String?     @db.Text
+  interviewInfo String?     @db.Text
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -214,6 +227,18 @@ model InterviewRound {
 
   @@unique([applicationId, roundNumber])
   @@map("interview_rounds")
+}
+
+model RecruiterCompany {
+  id          String   @id @default(cuid())
+  recruiterId String
+  name        String
+  createdAt   DateTime @default(now())
+
+  recruiter User @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+
+  @@unique([recruiterId, name])
+  @@map("recruiter_companies")
 }
 
 model Account {

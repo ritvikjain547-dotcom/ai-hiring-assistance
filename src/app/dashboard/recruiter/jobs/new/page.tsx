@@ -1,7 +1,12 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { createJob } from "@/actions/jobs";
+import {
+  getRecruiterSetup,
+  setRecruiterType,
+  addRecruiterCompany,
+} from "@/actions/recruiterProfile";
 import {
   Briefcase,
   MapPin,
@@ -13,7 +18,17 @@ import {
   X,
   ListOrdered,
   IndianRupee,
+  Building2,
+  Users,
+  ChevronDown,
+  Check,
 } from "lucide-react";
+
+type RecruiterSetup = {
+  recruiterType: "COMPANY_HR" | "AGENCY" | null;
+  companyName: string | null;
+  recruiterCompanies: { id: string; name: string }[];
+} | null;
 
 export default function NewJobPage() {
   const [loading, setLoading] = useState(false);
@@ -23,6 +38,39 @@ export default function NewJobPage() {
   const [includeAiRound, setIncludeAiRound] = useState(true);
   const [setupAi, setSetupAi] = useState(true);
   const [currency, setCurrency] = useState("USD");
+
+  // Recruiter type state
+  const [recruiterSetup, setRecruiterSetup] = useState<RecruiterSetup>(null);
+  const [setupLoading, setSetupLoading] = useState(true);
+  const [setupStep, setSetupStep] = useState<"loading" | "choose" | "ready">("loading");
+  const [selectedType, setSelectedType] = useState<"COMPANY_HR" | "AGENCY" | null>(null);
+  const [companyNameInput, setCompanyNameInput] = useState("");
+  const [isPending, startTransition] = useTransition();
+
+  // Company selector state (for agency)
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [showAddCompany, setShowAddCompany] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState("");
+  const [addingCompany, setAddingCompany] = useState(false);
+  const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
+
+  // Load recruiter setup on mount
+  useEffect(() => {
+    async function load() {
+      const setup = await getRecruiterSetup();
+      setRecruiterSetup(setup);
+      if (setup?.recruiterType) {
+        setSetupStep("ready");
+        if (setup.recruiterType === "COMPANY_HR" && setup.companyName) {
+          setCompanyNameInput(setup.companyName);
+        }
+      } else {
+        setSetupStep("choose");
+      }
+      setSetupLoading(false);
+    }
+    load();
+  }, []);
 
   const handleTotalRoundsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
@@ -51,10 +99,66 @@ export default function NewJobPage() {
     });
   };
 
+  async function handleSetupSubmit() {
+    if (!selectedType) return;
+    if (selectedType === "COMPANY_HR" && !companyNameInput.trim()) {
+      setError("Please enter your company name");
+      return;
+    }
+    setError("");
+    startTransition(async () => {
+      const result = await setRecruiterType(
+        selectedType,
+        selectedType === "COMPANY_HR" ? companyNameInput.trim() : undefined
+      );
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Refresh setup
+        const setup = await getRecruiterSetup();
+        setRecruiterSetup(setup);
+        setSetupStep("ready");
+      }
+    });
+  }
+
+  async function handleAddCompany() {
+    if (!newCompanyName.trim()) return;
+    setAddingCompany(true);
+    const result = await addRecruiterCompany(newCompanyName.trim());
+    if (result.error) {
+      setError(result.error);
+    } else if (result.company) {
+      // Add to local list and select it
+      setRecruiterSetup(prev => prev ? {
+        ...prev,
+        recruiterCompanies: [...prev.recruiterCompanies, result.company!].sort((a, b) => a.name.localeCompare(b.name)),
+      } : prev);
+      setSelectedCompany(result.company.name);
+      setNewCompanyName("");
+      setShowAddCompany(false);
+      setCompanyDropdownOpen(false);
+      setError("");
+    }
+    setAddingCompany(false);
+  }
+
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError("");
     
+    // Set company name from the recruiter type context
+    if (recruiterSetup?.recruiterType === "COMPANY_HR") {
+      formData.set("company", recruiterSetup.companyName || companyNameInput);
+    } else if (recruiterSetup?.recruiterType === "AGENCY") {
+      if (!selectedCompany) {
+        setError("Please select a company for this job posting");
+        setLoading(false);
+        return;
+      }
+      formData.set("company", selectedCompany);
+    }
+
     // Inject computed round data
     const finalRoundNames = [...roundNames];
     if (includeAiRound && (totalRounds || 1) > 0) {
@@ -73,6 +177,180 @@ export default function NewJobPage() {
     }
   }
 
+  // --- Loading state ---
+  if (setupLoading) {
+    return (
+      <div className="animate-fade-in" style={{ display: "flex", justifyContent: "center", padding: "var(--space-12)" }}>
+        <Loader2 size={32} className="spinner" style={{ color: "var(--color-primary)" }} />
+      </div>
+    );
+  }
+
+  // --- Recruiter Type Setup (first-time) ---
+  if (setupStep === "choose") {
+    return (
+      <div className="animate-fade-in">
+        <div className="page-header">
+          <h1 className="page-title">Welcome! Let&apos;s set up your profile</h1>
+          <p className="page-subtitle">
+            Tell us about your recruiting role so we can customize your experience
+          </p>
+        </div>
+
+        {error && (
+          <div className="alert alert-error" style={{ marginBottom: "var(--space-5)", maxWidth: "700px" }}>
+            {error}
+          </div>
+        )}
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "var(--space-6)",
+          maxWidth: "700px",
+          marginBottom: "var(--space-6)",
+        }}>
+          {/* Company HR Card */}
+          <button
+            type="button"
+            onClick={() => { setSelectedType("COMPANY_HR"); setError(""); }}
+            style={{
+              padding: "var(--space-6)",
+              background: selectedType === "COMPANY_HR"
+                ? "rgba(99, 102, 241, 0.1)"
+                : "rgba(255, 255, 255, 0.03)",
+              border: selectedType === "COMPANY_HR"
+                ? "2px solid var(--color-primary)"
+                : "1px solid var(--color-border)",
+              borderRadius: "var(--radius-xl)",
+              cursor: "pointer",
+              textAlign: "left",
+              transition: "all var(--transition-fast)",
+              position: "relative",
+            }}
+          >
+            {selectedType === "COMPANY_HR" && (
+              <div style={{
+                position: "absolute", top: "12px", right: "12px",
+                width: "24px", height: "24px", borderRadius: "50%",
+                background: "var(--color-primary)", display: "flex",
+                alignItems: "center", justifyContent: "center",
+              }}>
+                <Check size={14} color="#fff" />
+              </div>
+            )}
+            <div style={{
+              width: "48px", height: "48px", borderRadius: "var(--radius-lg)",
+              background: "rgba(99, 102, 241, 0.12)", display: "flex",
+              alignItems: "center", justifyContent: "center",
+              marginBottom: "var(--space-4)",
+            }}>
+              <Building2 size={24} color="#818cf8" />
+            </div>
+            <div style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: "var(--space-2)", color: "var(--color-text-primary)" }}>
+              Company HR
+            </div>
+            <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", lineHeight: "1.5" }}>
+              I&apos;m hiring for my own company. My company name will auto-fill on every job I post.
+            </div>
+          </button>
+
+          {/* Recruiting Agency Card */}
+          <button
+            type="button"
+            onClick={() => { setSelectedType("AGENCY"); setError(""); }}
+            style={{
+              padding: "var(--space-6)",
+              background: selectedType === "AGENCY"
+                ? "rgba(56, 189, 248, 0.1)"
+                : "rgba(255, 255, 255, 0.03)",
+              border: selectedType === "AGENCY"
+                ? "2px solid #38bdf8"
+                : "1px solid var(--color-border)",
+              borderRadius: "var(--radius-xl)",
+              cursor: "pointer",
+              textAlign: "left",
+              transition: "all var(--transition-fast)",
+              position: "relative",
+            }}
+          >
+            {selectedType === "AGENCY" && (
+              <div style={{
+                position: "absolute", top: "12px", right: "12px",
+                width: "24px", height: "24px", borderRadius: "50%",
+                background: "#38bdf8", display: "flex",
+                alignItems: "center", justifyContent: "center",
+              }}>
+                <Check size={14} color="#fff" />
+              </div>
+            )}
+            <div style={{
+              width: "48px", height: "48px", borderRadius: "var(--radius-lg)",
+              background: "rgba(56, 189, 248, 0.12)", display: "flex",
+              alignItems: "center", justifyContent: "center",
+              marginBottom: "var(--space-4)",
+            }}>
+              <Users size={24} color="#38bdf8" />
+            </div>
+            <div style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: "var(--space-2)", color: "var(--color-text-primary)" }}>
+              Recruiting Agency
+            </div>
+            <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", lineHeight: "1.5" }}>
+              I recruit for multiple companies. I&apos;ll select or add companies when posting each job.
+            </div>
+          </button>
+        </div>
+
+        {/* Company name input for Company HR */}
+        {selectedType === "COMPANY_HR" && (
+          <div className="card" style={{ maxWidth: "700px", marginBottom: "var(--space-5)" }}>
+            <div className="form-group">
+              <label className="form-label" htmlFor="setup-company-name">
+                <Building2 size={14} style={{ display: "inline", marginRight: "6px", verticalAlign: "middle" }} />
+                Your Company Name *
+              </label>
+              <input
+                id="setup-company-name"
+                type="text"
+                className="form-input"
+                placeholder="e.g. Acme Inc."
+                value={companyNameInput}
+                onChange={(e) => setCompanyNameInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSetupSubmit(); } }}
+                autoFocus
+              />
+              <span className="form-helper">
+                This will auto-fill the company field every time you post a new job.
+              </span>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={handleSetupSubmit}
+          className="btn btn-primary btn-lg"
+          disabled={!selectedType || isPending || (selectedType === "COMPANY_HR" && !companyNameInput.trim())}
+          style={{ maxWidth: "700px" }}
+        >
+          {isPending ? (
+            <>
+              <Loader2 size={18} className="spinner" /> Saving...
+            </>
+          ) : (
+            <>
+              Continue to Post a Job <ArrowRight size={16} />
+            </>
+          )}
+        </button>
+      </div>
+    );
+  }
+
+  // --- Main Job Posting Form ---
+  const isAgency = recruiterSetup?.recruiterType === "AGENCY";
+  const isCompanyHR = recruiterSetup?.recruiterType === "COMPANY_HR";
+  const companies = recruiterSetup?.recruiterCompanies || [];
+
   return (
     <div className="animate-fade-in">
       <div className="page-header">
@@ -88,6 +366,40 @@ export default function NewJobPage() {
             {error}
           </div>
         )}
+
+        {/* Recruiter Type Badge */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "var(--space-3)",
+          marginBottom: "var(--space-5)",
+          padding: "var(--space-3) var(--space-4)",
+          background: isAgency ? "rgba(56, 189, 248, 0.06)" : "rgba(99, 102, 241, 0.06)",
+          border: `1px solid ${isAgency ? "rgba(56, 189, 248, 0.15)" : "rgba(99, 102, 241, 0.15)"}`,
+          borderRadius: "var(--radius-lg)",
+        }}>
+          {isAgency ? <Users size={16} color="#38bdf8" /> : <Building2 size={16} color="#818cf8" />}
+          <span style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+            Posting as: <strong style={{ color: "var(--color-text-primary)" }}>
+              {isAgency ? "Recruiting Agency" : `Company HR — ${recruiterSetup?.companyName}`}
+            </strong>
+          </span>
+          <button
+            type="button"
+            onClick={() => { setSetupStep("choose"); setSelectedType(recruiterSetup?.recruiterType || null); }}
+            style={{
+              marginLeft: "auto",
+              fontSize: "var(--text-xs)",
+              color: "var(--color-text-muted)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Change
+          </button>
+        </div>
 
         <form action={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
           <div className="grid-2">
@@ -105,18 +417,193 @@ export default function NewJobPage() {
               />
             </div>
 
+            {/* Company field — different depending on recruiter type */}
             <div className="form-group">
               <label className="form-label" htmlFor="job-company">
                 Company Name *
               </label>
-              <input
-                id="job-company"
-                name="company"
-                type="text"
-                className="form-input"
-                placeholder="e.g. Acme Inc."
-                required
-              />
+              {isCompanyHR ? (
+                /* Company HR: auto-filled, read-only */
+                <div style={{ position: "relative" }}>
+                  <input
+                    id="job-company"
+                    name="company"
+                    type="text"
+                    className="form-input"
+                    value={recruiterSetup?.companyName || ""}
+                    readOnly
+                    style={{
+                      backgroundColor: "var(--color-bg-secondary)",
+                      color: "var(--color-text-secondary)",
+                      cursor: "default",
+                    }}
+                  />
+                  <Building2
+                    size={14}
+                    style={{
+                      position: "absolute",
+                      right: "12px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      color: "var(--color-text-muted)",
+                    }}
+                  />
+                </div>
+              ) : isAgency ? (
+                /* Agency: dropdown to select or add company */
+                <div style={{ position: "relative" }}>
+                  <button
+                    type="button"
+                    id="job-company"
+                    onClick={() => setCompanyDropdownOpen(!companyDropdownOpen)}
+                    className="form-input"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      width: "100%",
+                      color: selectedCompany ? "var(--color-text-primary)" : "var(--color-text-muted)",
+                    }}
+                  >
+                    <span>{selectedCompany || "Select a company..."}</span>
+                    <ChevronDown size={14} style={{ 
+                      transition: "transform 0.2s", 
+                      transform: companyDropdownOpen ? "rotate(180deg)" : "none",
+                      flexShrink: 0,
+                    }} />
+                  </button>
+
+                  {/* Hidden input for form submission */}
+                  <input type="hidden" name="company" value={selectedCompany} />
+
+                  {companyDropdownOpen && (
+                    <div style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      zIndex: 50,
+                      marginTop: "4px",
+                      background: "var(--color-bg-elevated)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "var(--radius-lg)",
+                      boxShadow: "var(--shadow-lg)",
+                      maxHeight: "240px",
+                      overflowY: "auto",
+                    }}>
+                      {companies.length > 0 && companies.map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCompany(c.name);
+                            setCompanyDropdownOpen(false);
+                          }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "var(--space-2)",
+                            width: "100%",
+                            padding: "10px var(--space-4)",
+                            background: selectedCompany === c.name ? "rgba(99, 102, 241, 0.08)" : "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: "var(--text-sm)",
+                            color: "var(--color-text-primary)",
+                            textAlign: "left",
+                            transition: "background 0.15s",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = selectedCompany === c.name ? "rgba(99, 102, 241, 0.08)" : "transparent")}
+                        >
+                          <Building2 size={14} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+                          {c.name}
+                          {selectedCompany === c.name && (
+                            <Check size={14} style={{ marginLeft: "auto", color: "var(--color-primary)" }} />
+                          )}
+                        </button>
+                      ))}
+
+                      {/* Divider */}
+                      {companies.length > 0 && (
+                        <div style={{ height: "1px", background: "var(--color-border)", margin: "4px 0" }} />
+                      )}
+
+                      {/* Add new company inline */}
+                      {showAddCompany ? (
+                        <div style={{ padding: "8px var(--space-4)", display: "flex", gap: "var(--space-2)" }}>
+                          <input
+                            type="text"
+                            className="form-input"
+                            placeholder="New company name..."
+                            value={newCompanyName}
+                            onChange={(e) => setNewCompanyName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCompany(); } }}
+                            autoFocus
+                            style={{ flex: 1, fontSize: "var(--text-sm)", padding: "6px 10px" }}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddCompany}
+                            className="btn btn-primary btn-sm"
+                            disabled={addingCompany || !newCompanyName.trim()}
+                            style={{ fontSize: "var(--text-xs)", padding: "4px 10px", whiteSpace: "nowrap" }}
+                          >
+                            {addingCompany ? <Loader2 size={12} className="spinner" /> : <Plus size={12} />}
+                            Add
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setShowAddCompany(false); setNewCompanyName(""); }}
+                            style={{
+                              background: "none", border: "none", cursor: "pointer",
+                              color: "var(--color-text-muted)", padding: "4px",
+                            }}
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setShowAddCompany(true)}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "var(--space-2)",
+                            width: "100%",
+                            padding: "10px var(--space-4)",
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: "var(--text-sm)",
+                            color: "var(--color-primary)",
+                            fontWeight: 600,
+                            textAlign: "left",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(99, 102, 241, 0.06)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                        >
+                          <Plus size={14} />
+                          Add New Company
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Fallback: plain text input */
+                <input
+                  id="job-company"
+                  name="company"
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. Acme Inc."
+                  required
+                />
+              )}
             </div>
           </div>
 

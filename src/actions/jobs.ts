@@ -134,6 +134,9 @@ export async function getJobById(jobId: string) {
       recruiter: { select: { name: true, email: true } },
       preference: true,
       applications: {
+        where: {
+          status: { not: "REJECTED" },
+        },
         include: {
           applicant: {
             select: {

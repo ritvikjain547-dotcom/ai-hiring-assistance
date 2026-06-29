@@ -17,15 +17,21 @@ function getPool(): Pool {
     ssl: connectionString.includes("sslmode=")
       ? { rejectUnauthorized: false }
       : undefined,
-    // Keep connections alive to avoid repeated SSL handshakes
     keepAlive: true,
     keepAliveInitialDelayMillis: 10000,
-    // Maintain warm connections for faster queries
-    min: 2,
+    min: 0,
     max: 10,
-    // Don't wait too long for a connection
-    connectionTimeoutMillis: 10000,
-    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 15000,
+    // Neon aggressively drops idle connections; recycle quickly
+    idleTimeoutMillis: 5000,
+  });
+
+  // When a background connection dies (Neon closes it),
+  // clear the cached pool & prisma so the next request rebuilds them.
+  pool.on("error", (err) => {
+    console.warn("[pg pool] Background connection error — clearing pool:", err.message);
+    globalForPrisma.pgPool = undefined;
+    globalForPrisma.prisma = undefined;
   });
 
   globalForPrisma.pgPool = pool;

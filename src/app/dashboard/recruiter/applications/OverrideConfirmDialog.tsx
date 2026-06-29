@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { AlertTriangle, X, RefreshCw, UserCheck, UserX, Award } from "lucide-react";
+import { AlertTriangle, X, RefreshCw, UserCheck, UserX } from "lucide-react";
 import { updateApplicationStatus, reAnalyzeApplication } from "@/actions/applications";
 import { useRouter } from "next/navigation";
 
@@ -92,18 +92,6 @@ export function OverrideConfirmDialog({
           >
             <UserX size={14} />
             Reject
-          </button>
-        )}
-
-        {/* Show Hire button when shortlisted */}
-        {currentStatus === "SHORTLISTED" && (
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleStatusChange("HIRED")}
-            disabled={loading}
-          >
-            <Award size={14} />
-            Hire
           </button>
         )}
 

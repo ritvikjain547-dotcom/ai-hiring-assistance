@@ -3,6 +3,13 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import {
+  sendRoundAdvanceEmail,
+  sendRoundRejectionEmail,
+  sendFinalOfferEmail,
+  sendInterviewScheduledEmail,
+} from "@/lib/email";
 
 /**
  * Initialize interview rounds for an application.
@@ -57,11 +64,14 @@ export async function initializeRounds(
 }
 
 /**
- * Update a round's status and optional feedback.
+ * Update a round's status with review text.
+ * Handles "Selected" (PASSED) and "Rejected" (FAILED) with review modal flow.
+ * Automatically sends appropriate emails based on the outcome.
  */
 export async function updateRoundStatus(
   roundId: string,
   status: string,
+  review?: string,
   feedback?: string
 ) {
   const session = await auth();
@@ -73,7 +83,11 @@ export async function updateRoundStatus(
     where: { id: roundId },
     include: {
       application: {
-        include: { job: true },
+        include: {
+          job: true,
+          applicant: { select: { name: true, email: true } },
+          interviewRounds: { orderBy: { roundNumber: "asc" } },
+        },
       },
     },
   });
@@ -83,11 +97,13 @@ export async function updateRoundStatus(
     return { error: "Unauthorized" };
   }
 
-  // Update the round
+  // Update the round with review
   await prisma.interviewRound.update({
     where: { id: roundId },
     data: {
       status: status as any,
+      review: review || undefined,
+      reviewedAt: review ? new Date() : undefined,
       feedback: feedback !== undefined ? feedback : undefined,
       completedAt: ["PASSED", "FAILED"].includes(status) ? new Date() : null,
       scheduledAt: status === "SCHEDULED" ? new Date() : undefined,
@@ -102,16 +118,151 @@ export async function updateRoundStatus(
 
   const passedCount = allRounds.filter((r) => r.status === "PASSED").length;
   const hasFailed = allRounds.some((r) => r.status === "FAILED");
+  const allPassed = passedCount === allRounds.length && allRounds.length > 0;
+
+  // Determine application status
+  let applicationStatus: string | undefined;
+  if (hasFailed) {
+    applicationStatus = "REJECTED";
+  } else if (allPassed) {
+    applicationStatus = "HIRED";
+  } else if (status === "PASSED" && passedCount > 0 && !allPassed) {
+    // Candidate was shortlisted (passed a non-final round)
+    applicationStatus = "SHORTLISTED";
+  }
 
   await prisma.application.update({
     where: { id: round.applicationId },
     data: {
       currentRound: passedCount,
-      // Auto-update application status based on round results
-      ...(hasFailed ? { status: "REJECTED" } : {}),
-      ...(passedCount === allRounds.length ? { status: "SHORTLISTED" } : {}),
+      ...(applicationStatus ? { status: applicationStatus as any } : {}),
     },
   });
+
+  const applicant = round.application.applicant;
+  const job = round.application.job;
+
+  try {
+    if (status === "PASSED") {
+      if (allPassed) {
+        // All rounds passed → send offer letter with PDF attachment
+          await sendFinalOfferEmail(
+            applicant.name,
+            applicant.email,
+            job.title,
+            job.company,
+            allRounds.length,
+            {
+              salaryMin: job.salaryMin,
+              salaryMax: job.salaryMax,
+              salaryCurrency: job.salaryCurrency,
+              employmentType: job.employmentType,
+              location: job.location,
+              locationType: job.locationType,
+            }
+          );
+        } else {
+          // Find next round
+          const nextRound = allRounds.find(
+            (r) => r.roundNumber === round.roundNumber + 1
+          );
+          await sendRoundAdvanceEmail(
+            applicant.name,
+            applicant.email,
+            job.title,
+            job.company,
+            round.roundName,
+            round.roundNumber,
+            nextRound?.roundName || null
+          );
+        }
+    } else if (status === "FAILED") {
+      // Rejected at this round
+      await sendRoundRejectionEmail(
+        applicant.name,
+        applicant.email,
+        job.title,
+        job.company,
+        round.roundName,
+        round.roundNumber
+      );
+    }
+  } catch (err) {
+    console.error("Failed to send round email:", err);
+  }
+
+  revalidatePath(`/dashboard/recruiter/jobs/${round.application.jobId}`);
+  revalidatePath("/dashboard/applicant/applications");
+  return { success: true };
+}
+
+/**
+ * Schedule an interview for a round — picks date/time and sends email to applicant.
+ */
+export async function scheduleRound(
+  roundId: string,
+  scheduledDate: string, // ISO date string from the client
+  interviewLink?: string,
+  interviewInfo?: string
+) {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== "RECRUITER") {
+    return { error: "Unauthorized" };
+  }
+
+  const round = await prisma.interviewRound.findUnique({
+    where: { id: roundId },
+    include: {
+      application: {
+        include: {
+          job: true,
+          applicant: { select: { name: true, email: true } },
+        },
+      },
+    },
+  });
+
+  if (!round) return { error: "Round not found" };
+  if (round.application.job.recruiterId !== session.user.id) {
+    return { error: "Unauthorized" };
+  }
+
+  const dateObj = new Date(scheduledDate);
+  if (isNaN(dateObj.getTime())) {
+    return { error: "Invalid date" };
+  }
+
+  // Update round with scheduled date and status
+  await prisma.interviewRound.update({
+    where: { id: roundId },
+    data: {
+      status: "SCHEDULED",
+      scheduledAt: new Date(),
+      scheduledDate: dateObj,
+      interviewLink: interviewLink?.trim() || null,
+      interviewInfo: interviewInfo?.trim() || null,
+    },
+  });
+
+  const applicant = round.application.applicant;
+  const job = round.application.job;
+
+  // Send interview scheduled email directly (not in after() for reliability)
+  try {
+    await sendInterviewScheduledEmail(
+      applicant.name,
+      applicant.email,
+      job.title,
+      job.company,
+      round.roundName,
+      round.roundNumber,
+      dateObj,
+      interviewLink?.trim() || null,
+      interviewInfo?.trim() || null
+    );
+  } catch (err) {
+    console.error("Failed to send interview scheduled email:", err);
+  }
 
   revalidatePath(`/dashboard/recruiter/jobs/${round.application.jobId}`);
   revalidatePath("/dashboard/applicant/applications");

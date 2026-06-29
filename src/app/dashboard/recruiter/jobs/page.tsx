@@ -113,7 +113,7 @@ export default async function RecruiterJobsPage(props: {
               <div className="job-card-footer">
                 {job.salaryMin && job.salaryMax ? (
                   <span className="job-card-salary">
-                    ${job.salaryMin.toLocaleString()} - $
+                    {job.salaryCurrency === "INR" ? "₹" : "$"}{job.salaryMin.toLocaleString()} - {job.salaryCurrency === "INR" ? "₹" : "$"}
                     {job.salaryMax.toLocaleString()}
                   </span>
                 ) : (

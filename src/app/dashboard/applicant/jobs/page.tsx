@@ -6,6 +6,7 @@ import {
   Clock,
   Users,
   DollarSign,
+  IndianRupee,
   Briefcase,
 } from "lucide-react";
 
@@ -142,8 +143,8 @@ export default async function ApplicantJobsPage({
               <div className="job-card-footer">
                 {job.salaryMin && job.salaryMax ? (
                   <span className="job-card-salary">
-                    <DollarSign size={14} style={{ display: "inline" }} />
-                    {job.salaryMin.toLocaleString()} - $
+                    {job.salaryCurrency === "INR" ? <IndianRupee size={14} style={{ display: "inline" }} /> : <DollarSign size={14} style={{ display: "inline" }} />}
+                    {job.salaryCurrency === "INR" ? "₹" : "$"}{job.salaryMin.toLocaleString()} - {job.salaryCurrency === "INR" ? "₹" : "$"}
                     {job.salaryMax.toLocaleString()}
                   </span>
                 ) : (

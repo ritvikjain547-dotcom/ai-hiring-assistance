@@ -19,6 +19,8 @@ interface Round {
   scheduledAt: string | null;
   completedAt: string | null;
   feedback: string | null;
+  interviewLink?: string | null;
+  interviewInfo?: string | null;
 }
 
 interface InterviewTimelineProps {
@@ -194,6 +196,24 @@ export function InterviewTimeline({ rounds, currentRound, totalRounds }: Intervi
                     </span>
                   )}
                 </button>
+
+                {/* Scheduled details (Link and Info) */}
+                {round.status === "SCHEDULED" && (round.interviewLink || round.interviewInfo) && (
+                  <div style={{ padding: "var(--space-3)", background: "var(--color-bg-secondary)", borderRadius: "var(--radius-md)", marginTop: "var(--space-2)" }}>
+                    {round.interviewLink && (
+                      <div style={{ marginBottom: round.interviewInfo ? "var(--space-2)" : 0 }}>
+                        <a href={round.interviewLink} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)", textDecoration: "underline", fontSize: "var(--text-sm)", display: "flex", alignItems: "center", gap: "6px" }}>
+                          Join Interview Link
+                        </a>
+                      </div>
+                    )}
+                    {round.interviewInfo && (
+                      <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", whiteSpace: "pre-wrap" }}>
+                        {round.interviewInfo}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Expanded Feedback */}
                 {isExpanded && round.feedback && (

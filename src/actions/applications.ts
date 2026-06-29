@@ -67,7 +67,26 @@ async function runAiAnalysis(applicationId: string, jobId: string): Promise<void
       job.preference
     );
 
-    // Step 4: Store AI results
+    // Step 4: Check if matching to auto-clear Round 1
+    let currentRound = 0;
+    if (result.classification === "MATCHING") {
+      const firstRound = await prisma.interviewRound.findFirst({
+        where: { applicationId, roundNumber: 1 },
+      });
+      if (firstRound) {
+        await prisma.interviewRound.update({
+          where: { id: firstRound.id },
+          data: {
+            status: "PASSED",
+            review: "🤖 AI Screening passed automatically (Matching candidate)",
+            reviewedAt: new Date(),
+            completedAt: new Date(),
+          },
+        });
+        currentRound = 1;
+      }
+    }
+
     await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -79,6 +98,7 @@ async function runAiAnalysis(applicationId: string, jobId: string): Promise<void
         aiExperienceMatch: result.experienceRelevant,
         aiEducationMatch: result.educationRelevant,
         aiOverallSummary: result.overallSummary,
+        currentRound,
         // Also update application status based on classification
         status: result.classification === "MATCHING"
           ? "SHORTLISTED"
@@ -365,7 +385,15 @@ export async function updateApplicationStatus(
             application.applicant.email,
             application.job.title,
             application.job.company,
-            status as any
+            status as any,
+            status === "HIRED" ? {
+              salaryMin: application.job.salaryMin,
+              salaryMax: application.job.salaryMax,
+              salaryCurrency: application.job.salaryCurrency,
+              employmentType: application.job.employmentType,
+              location: application.job.location,
+              locationType: application.job.locationType,
+            } : undefined
           );
         }
       } catch (err) {
