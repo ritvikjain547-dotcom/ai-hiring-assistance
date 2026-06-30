@@ -88,10 +88,10 @@ export default async function DashboardLayout({
   const navSections = isRecruiter ? recruiterLinks : applicantLinks;
 
   return (
-    <div className="dashboard-layout">
-      {/* Top Bar */}
-      <div className="dashboard-topbar">
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+    <div className="dashboard-layout" style={{ minHeight: "100vh" }}>
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div style={{ padding: "var(--space-6) var(--space-6) 0", display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
           <Link href="/" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
               <Orbit size={18} />
@@ -102,42 +102,6 @@ export default async function DashboardLayout({
           </Link>
         </div>
 
-        <div className="dashboard-topbar-right">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-3)",
-            }}
-          >
-            <span
-              className={`badge ${isRecruiter ? "badge-primary" : "badge-success"}`}
-            >
-              {role}
-            </span>
-            <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
-              {session.user.name?.charAt(0).toUpperCase() || "U"}
-            </div>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>
-              {session.user.name}
-            </span>
-          </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/" });
-            }}
-          >
-            <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn" style={{ color: "white" }}>
-              <LogOut size={16} />
-              Sign Out
-            </button>
-          </form>
-        </div>
-      </div>
-
-      {/* Sidebar */}
-      <aside className="sidebar">
         <nav className="sidebar-nav">
           {navSections.map((section, si) => (
             <div key={si} className="sidebar-section">
@@ -196,8 +160,51 @@ export default async function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="dashboard-content">{children}</main>
+      {/* Right Content Area */}
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+        {/* Top Bar */}
+        <div className="dashboard-topbar">
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+            {/* Left side of topbar can be empty or have breadcrumbs */}
+          </div>
+
+          <div className="dashboard-topbar-right">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-3)",
+              }}
+            >
+              <span
+                className={`badge ${isRecruiter ? "badge-primary" : "badge-success"}`}
+              >
+                {role}
+              </span>
+              <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
+                {session.user.name?.charAt(0).toUpperCase() || "U"}
+              </div>
+              <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>
+                {session.user.name}
+              </span>
+            </div>
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/" });
+              }}
+            >
+              <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn" style={{ color: "white" }}>
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <main className="dashboard-content">{children}</main>
+      </div>
     </div>
   );
 }
