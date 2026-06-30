@@ -11,6 +11,8 @@ type Bubble = {
   duration: number
   delay: number
   background: string
+  borderColor: string
+  shadowColor: string
 }
 
 export default function AdminLoginPage() {
@@ -24,13 +26,19 @@ export default function AdminLoginPage() {
       const isIndigo = i % 2 === 0
       return {
         id: i,
-        size: Math.random() * 50 + 15, // 15px to 65px
+        size: Math.random() * 50 + 20, // 20px to 70px
         left: Math.random() * 100, // 0% to 100%
-        duration: Math.random() * 15 + 12, // 12s to 27s
+        duration: Math.random() * 12 + 10, // 10s to 22s
         delay: Math.random() * 8, // 0s to 8s
         background: isIndigo 
-          ? 'rgba(99, 102, 241, 0.05)' // Very soft indigo
-          : 'rgba(56, 189, 248, 0.05)' // Very soft sky blue
+          ? 'rgba(99, 102, 241, 0.12)' // Soft visible indigo
+          : 'rgba(56, 189, 248, 0.12)', // Soft visible sky blue
+        borderColor: isIndigo
+          ? 'rgba(99, 102, 241, 0.25)' // Visible indigo border
+          : 'rgba(56, 189, 248, 0.25)', // Visible sky blue border
+        shadowColor: isIndigo
+          ? 'rgba(99, 102, 241, 0.08)'
+          : 'rgba(56, 189, 248, 0.08)'
       }
     })
     setBubbles(generatedBubbles)
@@ -124,8 +132,8 @@ export default function AdminLoginPage() {
               height: `${bubble.size}px`,
               borderRadius: '50%',
               background: bubble.background,
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.02)',
+              border: `1.5px solid ${bubble.borderColor}`,
+              boxShadow: `0 8px 24px ${bubble.shadowColor}, inset 0 2px 4px rgba(255, 255, 255, 0.6)`,
               animation: `bubble-rise ${bubble.duration}s linear infinite`,
               animationDelay: `${bubble.delay}s`,
             }}
