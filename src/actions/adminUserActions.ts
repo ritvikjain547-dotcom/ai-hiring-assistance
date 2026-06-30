@@ -19,8 +19,8 @@ export async function toggleUserBlockStatus(userId: string, currentStatus: boole
       }
     })
 
-    revalidatePath('/dashboard/admin/applicants')
-    revalidatePath('/dashboard/admin/recruiters')
+    revalidatePath('/admin/dashboard/applicants')
+    revalidatePath('/admin/dashboard/recruiters')
     return { success: true }
   } catch (error) {
     console.error('Failed to toggle block status:', error)

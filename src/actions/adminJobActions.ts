@@ -17,8 +17,8 @@ export async function deleteJob(jobId: string) {
       }
     })
 
-    revalidatePath('/dashboard/admin/jobs')
-    revalidatePath('/dashboard/admin')
+    revalidatePath('/admin/dashboard/jobs')
+    revalidatePath('/admin/dashboard')
     
     return { success: true }
   } catch (error) {
@@ -44,8 +44,8 @@ export async function toggleJobStatus(jobId: string, currentStatus: string) {
       }
     })
 
-    revalidatePath('/dashboard/admin/jobs')
-    revalidatePath('/dashboard/admin')
+    revalidatePath('/admin/dashboard/jobs')
+    revalidatePath('/admin/dashboard')
     
     return { success: true }
   } catch (error) {
