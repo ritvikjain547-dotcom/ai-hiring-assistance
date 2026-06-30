@@ -29,10 +29,10 @@ export default function AdminLoginPage() {
       position: 'relative',
       padding: '24px',
       overflow: 'hidden',
-      background: '#09090b', // Deep rich dark background
+      background: '#f8fafc', // Clean, simplistic off-white background
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      {/* Dynamic Ambient Background Blobs */}
+      {/* Soft Pastel Background Blobs */}
       <div style={{
         position: 'absolute',
         width: '100%',
@@ -47,34 +47,35 @@ export default function AdminLoginPage() {
           position: 'absolute',
           top: '-10%',
           left: '-10%',
-          width: '50%',
-          height: '50%',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%)',
-          filter: 'blur(80px)',
-          animation: 'float-slow 20s infinite alternate'
+          width: '60%',
+          height: '60%',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%)',
+          filter: 'blur(60px)',
+          animation: 'float-slow 25s infinite alternate'
         }} />
         <div style={{
           position: 'absolute',
           bottom: '-10%',
           right: '-10%',
-          width: '50%',
-          height: '50%',
-          background: 'radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0) 70%)',
-          filter: 'blur(80px)',
-          animation: 'float-slow 25s infinite alternate-reverse'
+          width: '60%',
+          height: '60%',
+          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 70%)',
+          filter: 'blur(60px)',
+          animation: 'float-slow 30s infinite alternate-reverse'
         }} />
       </div>
 
       {/* Main Container */}
       <div style={{
         width: '100%',
-        maxWidth: '420px',
+        maxWidth: '400px',
         position: 'relative',
         zIndex: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '32px'
+        gap: '28px',
+        animation: 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
       }}>
         {/* Brand Header */}
         <div style={{ textAlign: 'center' }}>
@@ -82,53 +83,58 @@ export default function AdminLoginPage() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '64px',
-            height: '64px',
+            width: '60px',
+            height: '60px',
             borderRadius: '16px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            background: 'rgba(99, 102, 241, 0.05)',
+            border: '1px solid rgba(99, 102, 241, 0.1)',
+            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.05)',
             marginBottom: '16px',
-            color: '#818cf8'
+            color: '#6366f1'
           }}>
-            <Orbit size={32} className="animate-spin-slow" />
+            <Orbit size={30} className="animate-spin-slow" />
           </div>
           <h1 style={{
-            fontSize: '32px',
+            fontSize: '30px',
             fontWeight: 800,
-            color: '#ffffff',
+            color: '#0f172a', // Dark slate text
             letterSpacing: '-0.025em',
             margin: 0
           }}>
-            Hire<span style={{ color: '#38bdf8' }}>AI</span> Admin
+            Hire<span style={{ color: '#6366f1' }}>AI</span> Admin
           </h1>
           <p style={{
-            color: '#a1a1aa',
-            marginTop: '8px',
-            fontSize: '15px',
+            color: '#64748b', // Slate-500
+            marginTop: '6px',
+            fontSize: '14px',
             fontWeight: 500
           }}>
             Log in to manage the platform
           </p>
         </div>
 
-        {/* 3D Glassmorphism Login Card */}
-        <div style={{
-          width: '100%',
-          background: 'rgba(20, 20, 25, 0.7)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '24px',
-          padding: '40px 32px',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-        }}>
-          <form action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        {/* 3D Glassmorphism Login Card (Light Theme) */}
+        <div 
+          className="login-card"
+          style={{
+            width: '100%',
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(0, 0, 0, 0.06)',
+            borderRadius: '24px',
+            padding: '36px 32px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+            boxSizing: 'border-box',
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+          }}
+        >
+          <form action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Username Input */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label htmlFor="username" style={{
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: 600,
-                color: '#a1a1aa',
+                color: '#64748b',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
               }}>
@@ -144,33 +150,33 @@ export default function AdminLoginPage() {
                   width: '100%',
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  color: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  background: '#f8fafc',
+                  color: '#0f172a',
                   outline: 'none',
-                  fontSize: '15px',
+                  fontSize: '14px',
                   transition: 'all 0.2s ease',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#818cf8';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.04)';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.15)';
+                  e.target.style.borderColor = '#6366f1';
+                  e.target.style.background = '#ffffff';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.12)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.02)';
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.background = '#f8fafc';
                   e.target.style.boxShadow = 'none';
                 }}
               />
             </div>
 
             {/* Password Input */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label htmlFor="password" style={{
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: 600,
-                color: '#a1a1aa',
+                color: '#64748b',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
               }}>
@@ -186,22 +192,22 @@ export default function AdminLoginPage() {
                   width: '100%',
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  color: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  background: '#f8fafc',
+                  color: '#0f172a',
                   outline: 'none',
-                  fontSize: '15px',
+                  fontSize: '14px',
                   transition: 'all 0.2s ease',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#818cf8';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.04)';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.15)';
+                  e.target.style.borderColor = '#6366f1';
+                  e.target.style.background = '#ffffff';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.12)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.02)';
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.background = '#f8fafc';
                   e.target.style.boxShadow = 'none';
                 }}
               />
@@ -210,55 +216,54 @@ export default function AdminLoginPage() {
             {/* Error Message */}
             {error && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                color: '#f87171',
+                background: 'rgba(239, 68, 68, 0.05)',
+                border: '1px solid rgba(239, 68, 68, 0.15)',
+                color: '#ef4444',
                 padding: '12px 16px',
                 borderRadius: '12px',
-                fontSize: '14px',
+                fontSize: '13px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '8px'
               }}>
-                <ShieldAlert size={18} style={{ flexShrink: 0 }} />
+                <ShieldAlert size={16} style={{ flexShrink: 0 }} />
                 <span>{error}</span>
               </div>
             )}
 
-            {/* 3D Tactile Login Button */}
+            {/* 3D Tactile Login Button (Dark Slate) */}
             <button
               type="submit"
               disabled={loading}
-              className="btn-3d"
               style={{
                 position: 'relative',
-                background: '#ffffff',
-                color: '#09090b',
+                background: '#0f172a',
+                color: '#ffffff',
                 border: 'none',
                 padding: '14px 28px',
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: 700,
                 borderRadius: '12px',
                 cursor: 'pointer',
                 transition: 'all 0.1s ease',
-                boxShadow: '0 4px 0 #d4d4d8, 0 8px 16px rgba(0, 0, 0, 0.3)',
+                boxShadow: '0 4px 0 #020617, 0 6px 12px rgba(15, 23, 42, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 outline: 'none',
-                marginTop: '8px'
+                marginTop: '6px'
               }}
               onMouseDown={(e) => {
                 e.currentTarget.style.transform = 'translateY(3px)';
-                e.currentTarget.style.boxShadow = '0 1px 0 #d4d4d8, 0 2px 4px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.boxShadow = '0 1px 0 #020617, 0 2px 4px rgba(15, 23, 42, 0.1)';
               }}
               onMouseUp={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 0 #d4d4d8, 0 8px 16px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 0 #020617, 0 6px 12px rgba(15, 23, 42, 0.15)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 0 #d4d4d8, 0 8px 16px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 0 #020617, 0 6px 12px rgba(15, 23, 42, 0.15)';
               }}
             >
               {loading ? 'Logging in...' : 'Continue'}
@@ -271,11 +276,11 @@ export default function AdminLoginPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            fontSize: '13px',
-            color: '#71717a'
+            gap: '6px',
+            fontSize: '12px',
+            color: '#64748b'
           }}>
-            <ShieldCheck size={16} />
+            <ShieldCheck size={14} />
             <span>Secure administrative access</span>
           </div>
         </div>
@@ -285,15 +290,29 @@ export default function AdminLoginPage() {
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes float-slow {
           0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(5%, 5%) scale(1.1); }
-          100% { transform: translate(-5%, -5%) scale(0.95); }
+          50% { transform: translate(4%, 4%) scale(1.05); }
+          100% { transform: translate(-4%, -4%) scale(0.98); }
         }
         .animate-spin-slow {
-          animation: spin 8s linear infinite;
+          animation: spin 10s linear infinite;
         }
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .login-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
       `}} />
     </div>
