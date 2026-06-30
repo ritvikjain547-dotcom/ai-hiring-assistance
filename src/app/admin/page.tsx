@@ -17,6 +17,13 @@ export default function AdminLoginPage() {
     if (result?.error) {
       setError(result.error)
       setLoading(false)
+      // Trigger error shake animation
+      const errorBox = document.getElementById('error-box')
+      if (errorBox) {
+        errorBox.classList.remove('shake')
+        void errorBox.offsetWidth // Trigger reflow
+        errorBox.classList.add('shake')
+      }
     }
   }
 
@@ -29,7 +36,9 @@ export default function AdminLoginPage() {
       position: 'relative',
       padding: '24px',
       overflow: 'hidden',
-      background: '#f8fafc', // Clean, simplistic off-white background
+      background: 'linear-gradient(-45deg, #f8fafc, #f1f5f9, #e2e8f0, #f8fafc)',
+      backgroundSize: '400% 400%',
+      animation: 'gradient-bg 15s ease infinite',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       {/* Soft Pastel Background Blobs */}
@@ -49,9 +58,9 @@ export default function AdminLoginPage() {
           left: '-10%',
           width: '60%',
           height: '60%',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%)',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%)',
           filter: 'blur(60px)',
-          animation: 'float-slow 25s infinite alternate'
+          animation: 'float-slow 20s infinite alternate'
         }} />
         <div style={{
           position: 'absolute',
@@ -59,9 +68,9 @@ export default function AdminLoginPage() {
           right: '-10%',
           width: '60%',
           height: '60%',
-          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 70%)',
+          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0) 70%)',
           filter: 'blur(60px)',
-          animation: 'float-slow 30s infinite alternate-reverse'
+          animation: 'float-slow 25s infinite alternate-reverse'
         }} />
       </div>
 
@@ -75,7 +84,7 @@ export default function AdminLoginPage() {
         flexDirection: 'column',
         alignItems: 'center',
         gap: '28px',
-        animation: 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+        animation: 'bounce-in-up 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
       }}>
         {/* Brand Header */}
         <div style={{ textAlign: 'center' }}>
@@ -90,21 +99,22 @@ export default function AdminLoginPage() {
             border: '1px solid rgba(99, 102, 241, 0.1)',
             boxShadow: '0 4px 20px rgba(99, 102, 241, 0.05)',
             marginBottom: '16px',
-            color: '#6366f1'
+            color: '#6366f1',
+            animation: 'pulse-glow 3s infinite ease-in-out'
           }}>
             <Orbit size={30} className="animate-spin-slow" />
           </div>
           <h1 style={{
             fontSize: '30px',
             fontWeight: 800,
-            color: '#0f172a', // Dark slate text
+            color: '#0f172a',
             letterSpacing: '-0.025em',
             margin: 0
           }}>
             Hire<span style={{ color: '#6366f1' }}>AI</span> Admin
           </h1>
           <p style={{
-            color: '#64748b', // Slate-500
+            color: '#64748b',
             marginTop: '6px',
             fontSize: '14px',
             fontWeight: 500
@@ -118,14 +128,14 @@ export default function AdminLoginPage() {
           className="login-card"
           style={{
             width: '100%',
-            background: 'rgba(255, 255, 255, 0.75)',
+            background: 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(0, 0, 0, 0.06)',
             borderRadius: '24px',
             padding: '36px 32px',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
             boxSizing: 'border-box',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
           <form action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -155,17 +165,19 @@ export default function AdminLoginPage() {
                   color: '#0f172a',
                   outline: 'none',
                   fontSize: '14px',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = '#6366f1';
                   e.target.style.background = '#ffffff';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.12)';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.08), 0 0 0 3px rgba(99, 102, 241, 0.12)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = '#e2e8f0';
                   e.target.style.background = '#f8fafc';
+                  e.target.style.transform = 'translateY(0)';
                   e.target.style.boxShadow = 'none';
                 }}
               />
@@ -197,35 +209,41 @@ export default function AdminLoginPage() {
                   color: '#0f172a',
                   outline: 'none',
                   fontSize: '14px',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = '#6366f1';
                   e.target.style.background = '#ffffff';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.12)';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.08), 0 0 0 3px rgba(99, 102, 241, 0.12)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = '#e2e8f0';
                   e.target.style.background = '#f8fafc';
+                  e.target.style.transform = 'translateY(0)';
                   e.target.style.boxShadow = 'none';
                 }}
               />
             </div>
 
-            {/* Error Message */}
+            {/* Error Message with Shake */}
             {error && (
-              <div style={{
-                background: 'rgba(239, 68, 68, 0.05)',
-                border: '1px solid rgba(239, 68, 68, 0.15)',
-                color: '#ef4444',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                fontSize: '13px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
+              <div 
+                id="error-box"
+                className="shake"
+                style={{
+                  background: 'rgba(239, 68, 68, 0.05)',
+                  border: '1px solid rgba(239, 68, 68, 0.15)',
+                  color: '#ef4444',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  fontSize: '13px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
                 <ShieldAlert size={16} style={{ flexShrink: 0 }} />
                 <span>{error}</span>
               </div>
@@ -235,6 +253,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
+              className="btn-3d"
               style={{
                 position: 'relative',
                 background: '#0f172a',
@@ -245,7 +264,7 @@ export default function AdminLoginPage() {
                 fontWeight: 700,
                 borderRadius: '12px',
                 cursor: 'pointer',
-                transition: 'all 0.1s ease',
+                transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
                 boxShadow: '0 4px 0 #020617, 0 6px 12px rgba(15, 23, 42, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
@@ -258,8 +277,12 @@ export default function AdminLoginPage() {
                 e.currentTarget.style.boxShadow = '0 1px 0 #020617, 0 2px 4px rgba(15, 23, 42, 0.1)';
               }}
               onMouseUp={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 0 #020617, 0 6px 12px rgba(15, 23, 42, 0.15)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 0 #020617, 0 10px 20px rgba(15, 23, 42, 0.2)';
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 0 #020617, 0 10px 20px rgba(15, 23, 42, 0.2)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
@@ -300,19 +323,46 @@ export default function AdminLoginPage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        @keyframes fade-in-up {
-          from {
+        @keyframes bounce-in-up {
+          0% {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(40px) scale(0.95);
           }
-          to {
+          70% {
+            opacity: 0.9;
+            transform: translateY(-5px) scale(1.01);
+          }
+          100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
         }
+        @keyframes pulse-glow {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.05);
+          }
+          50% {
+            transform: scale(1.03);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+          }
+        }
+        @keyframes gradient-bg {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
         .login-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+          transform: translateY(-4px);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-6px); }
+          40%, 80% { transform: translateX(6px); }
+        }
+        .shake {
+          animation: shake 0.4s ease-in-out;
         }
       `}} />
     </div>
