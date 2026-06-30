@@ -1,12 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { login } from '@/actions/admin'
 import { Orbit, ShieldCheck, ShieldAlert } from 'lucide-react'
+
+type Bubble = {
+  id: number
+  size: number
+  left: number
+  duration: number
+  delay: number
+  background: string
+}
 
 export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [bubbles, setBubbles] = useState<Bubble[]>([])
+
+  // Generate random bubble properties on the client to avoid Next.js hydration mismatch
+  useEffect(() => {
+    const generatedBubbles = Array.from({ length: 18 }).map((_, i) => {
+      const isIndigo = i % 2 === 0
+      return {
+        id: i,
+        size: Math.random() * 50 + 15, // 15px to 65px
+        left: Math.random() * 100, // 0% to 100%
+        duration: Math.random() * 15 + 12, // 12s to 27s
+        delay: Math.random() * 8, // 0s to 8s
+        background: isIndigo 
+          ? 'rgba(99, 102, 241, 0.05)' // Very soft indigo
+          : 'rgba(56, 189, 248, 0.05)' // Very soft sky blue
+      }
+    })
+    setBubbles(generatedBubbles)
+  }, [])
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -41,7 +69,7 @@ export default function AdminLoginPage() {
       animation: 'gradient-bg 15s ease infinite',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      {/* Soft Pastel Background Blobs */}
+      {/* Ambient Background Blobs */}
       <div style={{
         position: 'absolute',
         width: '100%',
@@ -58,7 +86,7 @@ export default function AdminLoginPage() {
           left: '-10%',
           width: '60%',
           height: '60%',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%)',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%)',
           filter: 'blur(60px)',
           animation: 'float-slow 20s infinite alternate'
         }} />
@@ -68,10 +96,41 @@ export default function AdminLoginPage() {
           right: '-10%',
           width: '60%',
           height: '60%',
-          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0) 70%)',
+          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 70%)',
           filter: 'blur(60px)',
           animation: 'float-slow 25s infinite alternate-reverse'
         }} />
+      </div>
+
+      {/* Floating Bubbles */}
+      <div style={{
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+        zIndex: 1
+      }}>
+        {bubbles.map((bubble) => (
+          <div
+            key={bubble.id}
+            style={{
+              position: 'absolute',
+              bottom: '-80px',
+              left: `${bubble.left}%`,
+              width: `${bubble.size}px`,
+              height: `${bubble.size}px`,
+              borderRadius: '50%',
+              background: bubble.background,
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.02)',
+              animation: `bubble-rise ${bubble.duration}s linear infinite`,
+              animationDelay: `${bubble.delay}s`,
+            }}
+          />
+        ))}
       </div>
 
       {/* Main Container */}
@@ -363,6 +422,22 @@ export default function AdminLoginPage() {
         }
         .shake {
           animation: shake 0.4s ease-in-out;
+        }
+        @keyframes bubble-rise {
+          0% {
+            transform: translateY(110vh) translateX(0) scale(0.5);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-10vh) translateX(50px) scale(1.1);
+            opacity: 0;
+          }
         }
       `}} />
     </div>
