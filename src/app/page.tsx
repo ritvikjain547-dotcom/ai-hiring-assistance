@@ -30,7 +30,7 @@ export default function HomePage() {
         <div className="navbar-inner">
           <Link href="/" className="navbar-logo">
             <div className="navbar-logo-icon">
-              <Orbit size={20} />
+              <Orbit size={20} style={{ animation: "spin 12s linear infinite" }} />
             </div>
             <span>
               Hire<span className="gradient-text">AI</span>
@@ -448,7 +448,7 @@ export default function HomePage() {
           }}
         >
           <div className="navbar-logo-icon" style={{ width: 28, height: 28 }}>
-            <Orbit size={16} />
+            <Orbit size={16} style={{ animation: "spin 12s linear infinite" }} />
           </div>
           <span style={{ fontWeight: 700 }}>
             Hire<span className="gradient-text">AI</span>

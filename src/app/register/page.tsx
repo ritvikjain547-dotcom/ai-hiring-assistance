@@ -55,7 +55,7 @@ function RegisterForm() {
             style={{ justifyContent: "center", marginBottom: "var(--space-6)" }}
           >
             <div className="navbar-logo-icon">
-              <Orbit size={24} />
+              <Orbit size={24} style={{ animation: "spin 12s linear infinite" }} />
             </div>
             <span>
               Hire<span className="gradient-text">AI</span>

@@ -29,7 +29,7 @@ export default function AdminDashboardLayout({
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
           <Link href="/admin/dashboard" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
-              <Orbit size={18} />
+              <Orbit size={18} style={{ animation: "spin 12s linear infinite" }} />
             </div>
             <span>
               Hire<span style={{ color: "#38bdf8" }}>AI</span> Admin
