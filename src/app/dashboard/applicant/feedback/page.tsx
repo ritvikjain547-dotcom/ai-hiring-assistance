@@ -2,7 +2,21 @@
 
 import { useState } from "react";
 import { submitPlatformFeedback } from "@/actions/feedback";
-import { MessageSquare, Smile } from "lucide-react";
+import { 
+  MessageSquare, 
+  Frown, 
+  Meh, 
+  Smile, 
+  Laugh, 
+  Heart, 
+  Mail, 
+  Clock, 
+  Calendar, 
+  HelpCircle, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2 
+} from "lucide-react";
 
 export default function FeedbackPage() {
   const [feedback, setFeedback] = useState("");
@@ -33,62 +47,208 @@ export default function FeedbackPage() {
     setIsSubmitting(false);
   };
 
+  const ratingOptions = [
+    { value: 1, label: "Poor", icon: Frown },
+    { value: 2, label: "Okay", icon: Meh },
+    { value: 3, label: "Good", icon: Smile },
+    { value: 4, label: "Great", icon: Laugh },
+    { value: 5, label: "Awesome", icon: Heart },
+  ];
+
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <MessageSquare className="w-6 h-6 text-primary" />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ maxWidth: '1200px', margin: '0 auto', padding: 'var(--space-4) 0' }}>
+      <style>{`
+        .feedback-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--space-6);
+          width: 100%;
+        }
+        @media (min-width: 1024px) {
+          .feedback-grid {
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-8);
+          }
+        }
+        .rating-emoji-btn {
+          background: transparent;
+          border: 1px solid transparent;
+          border-radius: var(--radius-lg);
+          padding: var(--space-3) var(--space-2);
+          transition: all var(--transition-base);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: var(--space-2);
+          color: var(--color-text-muted);
+          flex: 1;
+          min-width: 70px;
+        }
+        .rating-emoji-btn:hover {
+          background: var(--color-bg-secondary);
+          color: var(--color-text-secondary);
+          transform: translateY(-2px);
+        }
+        .rating-emoji-btn.active-1 { color: #ef4444; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.2); }
+        .rating-emoji-btn.active-2 { color: #f97316; background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.2); }
+        .rating-emoji-btn.active-3 { color: #eab308; background: rgba(234, 179, 8, 0.08); border-color: rgba(234, 179, 8, 0.2); }
+        .rating-emoji-btn.active-4 { color: #22c55e; background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.2); }
+        .rating-emoji-btn.active-5 { color: #ec4899; background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.2); }
+      `}</style>
+
+      <div className="page-header" style={{ marginBottom: 'var(--space-8)' }}>
+        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <MessageSquare className="text-primary" size={28} />
           Feedback & Support
         </h1>
-        <p className="text-[var(--color-text-secondary)] mt-1">
-          ANY PROBLEM, QUERY WRITE TO OUR CUSTOMER SERVICE OUR AGENT WILL CONNECT TO YOU
+        <p className="page-subtitle" style={{ marginTop: 'var(--space-2)' }}>
+          We value your feedback. Let us know how we can improve your experience or report any issues you've encountered.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-[var(--color-bg-primary)] rounded-lg border border-[var(--color-border)] p-6 space-y-6">
-        {message && (
-          <div className={`p-4 rounded-md ${message.type === "success" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
-            {message.text}
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">How would you rate your experience?</label>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                className={`p-1 transition-colors ${rating >= star ? "text-yellow-500" : "text-gray-400 hover:text-yellow-400"}`}
-              >
-                <Smile className="w-8 h-8" fill={rating >= star ? "currentColor" : "none"} />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="feedback" className="block text-sm font-medium">Your Feedback</label>
-          <textarea
-            id="feedback"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Tell us what you love, what could be improved, or any issues you've encountered..."
-            rows={5}
-            className="w-full p-3 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:ring-2 focus:ring-primary outline-none resize-none"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || !feedback.trim()}
-          className="w-full py-3 bg-primary text-white font-medium rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      {message && (
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--space-3)', 
+            padding: 'var(--space-4)',
+            background: message.type === 'success' ? 'rgba(5, 150, 105, 0.08)' : 'rgba(220, 38, 38, 0.08)',
+            borderColor: message.type === 'success' ? 'rgba(5, 150, 105, 0.2)' : 'rgba(220, 38, 38, 0.2)',
+            color: message.type === 'success' ? 'var(--color-accent-success)' : 'var(--color-accent-danger)',
+            marginBottom: 'var(--space-6)',
+            borderRadius: 'var(--radius-lg)'
+          }}
         >
-          {isSubmitting ? "Submitting..." : "Submit Feedback"}
-        </button>
-      </form>
+          {message.type === 'success' ? (
+            <CheckCircle2 size={20} style={{ flexShrink: 0 }} />
+          ) : (
+            <AlertCircle size={20} style={{ flexShrink: 0 }} />
+          )}
+          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500 }}>{message.text}</span>
+        </div>
+      )}
+
+      <div className="feedback-grid">
+        {/* Left Box - Feedback Form */}
+        <form onSubmit={handleSubmit} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+          <div className="form-group">
+            <label className="form-label" style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+              How would you rate your overall experience?
+            </label>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-2)', flexWrap: 'wrap' }}>
+              {ratingOptions.map((option) => {
+                const Icon = option.icon;
+                const isActive = rating === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setRating(option.value)}
+                    className={`rating-emoji-btn ${isActive ? `active-${option.value}` : ''}`}
+                  >
+                    <Icon size={32} strokeWidth={isActive ? 2.5 : 1.8} />
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>{option.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="feedback" className="form-label" style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+              Your Feedback
+            </label>
+            <textarea
+              id="feedback"
+              className="form-input"
+              rows={6}
+              style={{ resize: 'none', fontFamily: 'inherit' }}
+              placeholder="Tell us what you like, what could be improved, or any issues you've encountered..."
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting || !feedback.trim()}
+            className="btn btn-primary"
+            style={{ 
+              width: '100%', 
+              padding: 'var(--space-4)', 
+              display: 'flex', 
+              gap: 'var(--space-2)', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              fontSize: 'var(--text-base)',
+              fontWeight: 600
+            }}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
+                Submitting...
+              </>
+            ) : (
+              "Submit Feedback"
+            )}
+          </button>
+        </form>
+
+        {/* Right Box - Support Details */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', height: 'fit-content' }}>
+          <div>
+            <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <HelpCircle className="text-primary" size={22} />
+              Need Assistance?
+            </h3>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-2)', lineHeight: '1.6' }}>
+              Experiencing a technical problem or have an urgent question? Get in touch with our customer support team directly.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', background: 'var(--color-bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+              <div style={{ color: 'var(--color-accent-info)', display: 'flex' }}>
+                <Mail size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-muted)' }}>Email Support</div>
+                <a href="mailto:support@aihiring.com" style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-primary)', textDecoration: 'underline' }}>
+                  support@aihiring.com
+                </a>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', background: 'var(--color-bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+              <div style={{ color: 'var(--color-accent-success)', display: 'flex' }}>
+                <Clock size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-muted)' }}>Response Time</div>
+                <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                  Under 24 hours
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', background: 'var(--color-bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+              <div style={{ color: 'var(--color-accent-warm)', display: 'flex' }}>
+                <Calendar size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-muted)' }}>Availability</div>
+                <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                  Monday - Friday
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
