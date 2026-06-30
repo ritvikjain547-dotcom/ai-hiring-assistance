@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { submitPlatformFeedback } from "@/actions/feedback";
 import { 
-  Sparkles, 
+  HeartHandshake, 
   Frown, 
   Meh, 
   Smile, 
@@ -126,7 +126,7 @@ export default function FeedbackPage() {
 
       <div className="page-header" style={{ marginBottom: 'var(--space-8)' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-          <Sparkles className="text-primary" size={28} />
+          <HeartHandshake className="text-primary" size={28} />
           Platform Feedback
         </h1>
         <p className="page-subtitle" style={{ marginTop: 'var(--space-2)' }}>
