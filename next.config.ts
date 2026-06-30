@@ -10,15 +10,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "6mb",
     },
   },
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: '/admin',
         destination: 'https://ai-hiring-admin-portal.vercel.app/admin',
+        permanent: false,
       },
       {
         source: '/admin/:path*',
         destination: 'https://ai-hiring-admin-portal.vercel.app/admin/:path*',
+        permanent: false,
       },
     ]
   },
