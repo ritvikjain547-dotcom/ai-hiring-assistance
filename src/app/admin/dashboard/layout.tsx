@@ -13,13 +13,13 @@ export default function AdminDashboardLayout({
   const pathname = usePathname()
 
   const links = [
-    { href: '/dashboard/admin', label: 'Overview', icon: LayoutDashboard },
-    { href: '/dashboard/admin/applicants', label: 'Manage Applicants', icon: Users },
-    { href: '/dashboard/admin/recruiters', label: 'Manage Recruiters', icon: Building2 },
-    { href: '/dashboard/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
-    { href: '/dashboard/admin/review', label: 'Review Analytics', icon: BarChart3 },
-    { href: '/dashboard/admin/feedback', label: 'Platform Feedback', icon: MessageSquare },
-    { href: '/dashboard/admin/logs', label: 'Audit Logs', icon: History },
+    { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
+    { href: '/admin/dashboard/applicants', label: 'Manage Applicants', icon: Users },
+    { href: '/admin/dashboard/recruiters', label: 'Manage Recruiters', icon: Building2 },
+    { href: '/admin/dashboard/jobs', label: 'Manage Jobs', icon: Briefcase },
+    { href: '/admin/dashboard/review', label: 'Review Analytics', icon: BarChart3 },
+    { href: '/admin/dashboard/feedback', label: 'Platform Feedback', icon: MessageSquare },
+    { href: '/admin/dashboard/logs', label: 'Audit Logs', icon: History },
   ]
 
   return (
@@ -27,7 +27,7 @@ export default function AdminDashboardLayout({
       {/* Top Bar */}
       <div className="dashboard-topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
-          <Link href="/dashboard/admin" className="navbar-logo" style={{ color: "white" }}>
+          <Link href="/admin/dashboard" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
               <Orbit size={18} />
             </div>
@@ -58,7 +58,7 @@ export default function AdminDashboardLayout({
           <div className="sidebar-section">
             <div className="sidebar-section-title">Menu</div>
             {links.map((link) => {
-              const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/dashboard/admin');
+              const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/admin/dashboard');
               return (
                 <Link
                   key={link.href}

@@ -58,9 +58,9 @@ export default async function AdminDashboardPage() {
   }))
 
   const stats = [
-    { name: 'Total Applicants', value: totalApplicants, icon: Users, color: 'blue', href: '/dashboard/admin/applicants' },
-    { name: 'Total Recruiters', value: totalRecruiters, icon: Building2, color: 'purple', href: '/dashboard/admin/recruiters' },
-    { name: 'Total Job Postings', value: totalJobs, icon: Briefcase, color: 'amber', href: '/dashboard/admin/jobs' },
+    { name: 'Total Applicants', value: totalApplicants, icon: Users, color: 'blue', href: '/admin/dashboard/applicants' },
+    { name: 'Total Recruiters', value: totalRecruiters, icon: Building2, color: 'purple', href: '/admin/dashboard/recruiters' },
+    { name: 'Total Job Postings', value: totalJobs, icon: Briefcase, color: 'amber', href: '/admin/dashboard/jobs' },
     { name: 'Total Applications', value: totalApplications, icon: FileText, color: 'emerald', href: '#' },
   ]
 

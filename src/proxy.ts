@@ -7,12 +7,12 @@ const proxyHandler = auth((req) => {
   const userRole = req.auth?.user?.role;
   const isAdminLoggedIn = req.cookies.get('admin_session')?.value === process.env.ADMIN_SESSION_SECRET;
 
-  const isAdminDashboard = nextUrl.pathname.startsWith("/dashboard/admin");
+  const isAdminDashboard = nextUrl.pathname.startsWith("/admin/dashboard");
   const isAdminPage = nextUrl.pathname === "/admin";
 
   // Redirect logged-in admin away from /admin
   if (isAdminPage && isAdminLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard/admin", nextUrl));
+    return NextResponse.redirect(new URL("/admin/dashboard", nextUrl));
   }
 
   // Protect admin dashboard
