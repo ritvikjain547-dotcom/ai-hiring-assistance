@@ -76,6 +76,14 @@ async function sendScheduledDecisionEmail(applicationId: string): Promise<void> 
     }
 
     const classification = application.aiClassification || "PENDING_REVIEW";
+
+    // Do not send automatic emails for MATCHING or NEAR_BOUND.
+    // The recruiter will manually review and shortlist them in the pipeline.
+    if (classification === "MATCHING" || classification === "NEAR_BOUND") {
+      console.log(`[Email Scheduler] Skipping automatic email for ${classification} candidate. Recruiter will manually review.`);
+      return;
+    }
+
     const summary = application.aiOverallSummary || "Your application has been reviewed.";
 
     await sendAiDecisionEmail(

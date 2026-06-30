@@ -67,25 +67,8 @@ async function runAiAnalysis(applicationId: string, jobId: string): Promise<void
       job.preference
     );
 
-    // Step 4: Check if matching to auto-clear Round 1
-    let currentRound = 0;
-    if (result.classification === "MATCHING") {
-      const firstRound = await prisma.interviewRound.findFirst({
-        where: { applicationId, roundNumber: 1 },
-      });
-      if (firstRound) {
-        await prisma.interviewRound.update({
-          where: { id: firstRound.id },
-          data: {
-            status: "PASSED",
-            review: "🤖 AI Screening passed automatically (Matching candidate)",
-            reviewedAt: new Date(),
-            completedAt: new Date(),
-          },
-        });
-        currentRound = 1;
-      }
-    }
+    // Step 4: Keep Round 1 as PENDING for manual recruiter review and confirmation
+    const currentRound = 0;
 
     await prisma.application.update({
       where: { id: applicationId },
@@ -100,9 +83,7 @@ async function runAiAnalysis(applicationId: string, jobId: string): Promise<void
         aiOverallSummary: result.overallSummary,
         currentRound,
         // Also update application status based on classification
-        status: result.classification === "MATCHING"
-          ? "SHORTLISTED"
-          : result.classification === "NEAR_BOUND"
+        status: result.classification === "MATCHING" || result.classification === "NEAR_BOUND"
           ? "REVIEWING"
           : "REJECTED",
       },
