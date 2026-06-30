@@ -23,10 +23,10 @@ export default function AdminDashboardLayout({
   ]
 
   return (
-    <div className="dashboard-layout" style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div style={{ padding: "var(--space-6) var(--space-6) 0", display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+    <div className="dashboard-layout">
+      {/* Top Bar */}
+      <div className="dashboard-topbar">
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
           <Link href="/dashboard/admin" className="navbar-logo" style={{ color: "white" }}>
             <div className="navbar-logo-icon">
               <Orbit size={18} />
@@ -37,6 +37,23 @@ export default function AdminDashboardLayout({
           </Link>
         </div>
 
+        <div className="dashboard-topbar-right">
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+            <span className="badge badge-primary">ADMIN</span>
+            <div className="avatar avatar-sm">A</div>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>Administrator</span>
+          </div>
+          <form action={logout}>
+            <button type="submit" className="btn btn-ghost btn-sm">
+              <LogOut size={16} />
+              Sign Out
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      <aside className="sidebar">
         <nav className="sidebar-nav">
           <div className="sidebar-section">
             <div className="sidebar-section-title">Menu</div>
@@ -71,32 +88,8 @@ export default function AdminDashboardLayout({
         </div>
       </aside>
 
-      {/* Right Content Area */}
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
-        {/* Top Bar */}
-        <div className="dashboard-topbar">
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
-            {/* Left side of topbar can be empty or have breadcrumbs */}
-          </div>
-
-          <div className="dashboard-topbar-right">
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-              <span className="badge badge-primary">ADMIN</span>
-              <div className="avatar avatar-sm">A</div>
-              <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>Administrator</span>
-            </div>
-            <form action={logout}>
-              <button type="submit" className="btn btn-ghost btn-sm">
-                <LogOut size={16} />
-                Sign Out
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <main className="dashboard-content">{children}</main>
-      </div>
+      {/* Main Content */}
+      <main className="dashboard-content">{children}</main>
     </div>
   )
 }
