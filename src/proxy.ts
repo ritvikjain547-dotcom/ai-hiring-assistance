@@ -5,6 +5,20 @@ const proxyHandler = auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const userRole = req.auth?.user?.role;
+  const isAdminLoggedIn = req.cookies.get('admin_session')?.value === process.env.ADMIN_SESSION_SECRET;
+
+  const isAdminDashboard = nextUrl.pathname.startsWith("/dashboard/admin");
+  const isAdminPage = nextUrl.pathname === "/admin";
+
+  // Redirect logged-in admin away from /admin
+  if (isAdminPage && isAdminLoggedIn) {
+    return NextResponse.redirect(new URL("/dashboard/admin", nextUrl));
+  }
+
+  // Protect admin dashboard
+  if (isAdminDashboard && !isAdminLoggedIn) {
+    return NextResponse.redirect(new URL("/admin", nextUrl));
+  }
 
   const isAuthPage =
     nextUrl.pathname.startsWith("/login") ||
@@ -21,13 +35,13 @@ const proxyHandler = auth((req) => {
     return NextResponse.redirect(new URL("/dashboard/applicant", nextUrl));
   }
 
-  // Protect dashboard routes
-  if (isDashboard && !isLoggedIn) {
+  // Protect dashboard routes (excluding admin dashboard which is handled above)
+  if (isDashboard && !isAdminDashboard && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
   // Handle logged-in users on dashboard routes
-  if (isDashboard && isLoggedIn) {
+  if (isDashboard && !isAdminDashboard && isLoggedIn) {
     // If the role is missing, default to APPLICANT to prevent infinite loops, 
     // or you could redirect to a setup page.
     const role = userRole || "APPLICANT";
@@ -55,5 +69,5 @@ const proxyHandler = auth((req) => {
 export { proxyHandler as proxy };
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/login", "/register", "/admin"],
 };
