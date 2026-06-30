@@ -9,6 +9,7 @@ import {
   sendRoundRejectionEmail,
   sendFinalOfferEmail,
   sendInterviewScheduledEmail,
+  sendInterviewRescheduledEmail,
 } from "@/lib/email";
 
 /**
@@ -251,6 +252,8 @@ export async function scheduleRound(
   const applicant = round.application.applicant;
   const job = round.application.job;
 
+  const isReschedule = round.status === "SCHEDULED";
+
   // Check if the previous round was cleared to include in the email
   const previousRound = round.application.interviewRounds.find(
     (r) => r.roundNumber === round.roundNumber - 1
@@ -260,22 +263,36 @@ export async function scheduleRound(
       ? { roundName: previousRound.roundName, roundNumber: previousRound.roundNumber }
       : null;
 
-  // Send interview scheduled email directly (not in after() for reliability)
+  // Send interview scheduled or rescheduled email
   try {
-    await sendInterviewScheduledEmail(
-      applicant.name,
-      applicant.email,
-      job.title,
-      job.company,
-      round.roundName,
-      round.roundNumber,
-      dateObj,
-      interviewLink?.trim() || null,
-      interviewInfo?.trim() || null,
-      clearedRound
-    );
+    if (isReschedule) {
+      await sendInterviewRescheduledEmail(
+        applicant.name,
+        applicant.email,
+        job.title,
+        job.company,
+        round.roundName,
+        round.roundNumber,
+        dateObj,
+        interviewLink?.trim() || null,
+        interviewInfo?.trim() || null
+      );
+    } else {
+      await sendInterviewScheduledEmail(
+        applicant.name,
+        applicant.email,
+        job.title,
+        job.company,
+        round.roundName,
+        round.roundNumber,
+        dateObj,
+        interviewLink?.trim() || null,
+        interviewInfo?.trim() || null,
+        clearedRound
+      );
+    }
   } catch (err) {
-    console.error("Failed to send interview scheduled email:", err);
+    console.error("Failed to send interview email:", err);
   }
 
   revalidatePath(`/dashboard/recruiter/jobs/${round.application.jobId}`);

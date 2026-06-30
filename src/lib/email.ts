@@ -514,6 +514,80 @@ export async function sendInterviewScheduledEmail(
 }
 
 /**
+ * Send interview rescheduled email to applicant with updated date/time details.
+ */
+export async function sendInterviewRescheduledEmail(
+  name: string,
+  email: string,
+  jobTitle: string,
+  company: string,
+  roundName: string,
+  roundNumber: number,
+  scheduledDate: Date,
+  interviewLink?: string | null,
+  interviewInfo?: string | null
+) {
+  const formattedDate = scheduledDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const formattedTime = scheduledDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const subject = `🔄 Interview Rescheduled: ${roundName} for ${jobTitle} at ${company}`;
+
+  const content = `
+    <span class="badge badge-reviewing" style="background-color: #fef3c7; color: #d97706;">Interview Rescheduled</span>
+    <p>Dear ${name},</p>
+    <p>We apologize for the inconvenience, but your interview for the <strong>${jobTitle}</strong> position at <strong>${company}</strong> has been rescheduled.</p>
+    <p>Please find your updated interview details below:</p>
+    
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+      <div style="font-size: 11px; color: #60a5fa; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;">
+        New Interview Time
+      </div>
+      <div style="font-size: 14px; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+        ${roundName} (Round ${roundNumber})
+      </div>
+      <div style="font-size: 24px; font-weight: 800; color: #1e40af; margin-bottom: 4px;">
+        ${formattedDate}
+      </div>
+      <div style="font-size: 18px; font-weight: 600; color: #2563eb;">
+        ${formattedTime}
+      </div>
+    </div>
+
+    ${interviewLink ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 4px;">
+      <p style="margin-top: 0; font-weight: bold; color: #1e293b;">Interview Link:</p>
+      <a href="${interviewLink}" style="color: #2563eb; text-decoration: underline; word-break: break-all;">${interviewLink}</a>
+    </div>
+    ` : ''}
+
+    ${interviewInfo ? `
+    <div style="margin: 24px 0; padding: 16px; background-color: #f8fafc; border-left: 4px solid #8b5cf6; border-radius: 4px;">
+      <p style="margin-top: 0; font-weight: bold; color: #1e293b;">Additional Information from Recruiter:</p>
+      <p style="margin-bottom: 0; color: #334155; white-space: pre-wrap;">${interviewInfo}</p>
+    </div>
+    ` : ''}
+
+    <p>Please make sure to update your calendar and be available at the new scheduled time. You can check your dashboard for any updates or changes.</p>
+    <div class="button-container">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/applicant/applications" class="button">View Dashboard</a>
+    </div>
+    <p>Best of luck!</p>
+    <p>Best regards,<br>${company} Hiring Team</p>
+  `;
+  const html = getEmailWrapper(subject, content);
+  return sendEmail({ to: email, subject, html });
+}
+
+/**
  * Send round advance email — applicant passed a round and is moving to the next.
  */
 export async function sendRoundAdvanceEmail(
