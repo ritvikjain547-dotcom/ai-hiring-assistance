@@ -40,9 +40,10 @@ interface RoundManagerProps {
   applicationId: string;
   rounds: Round[];
   applicantName: string;
+  applicationStatus?: string;
 }
 
-export function RoundManager({ applicationId, rounds, applicantName }: RoundManagerProps) {
+export function RoundManager({ applicationId, rounds, applicantName, applicationStatus }: RoundManagerProps) {
   const [expanded, setExpanded] = useState(true);
   const [loading, setLoading] = useState<string | null>(null);
   const [newRoundName, setNewRoundName] = useState("");
@@ -234,7 +235,7 @@ export function RoundManager({ applicationId, rounds, applicantName }: RoundMana
                       ) : (
                         <div className="round-item-actions">
                           {/* === ACTIVE ROUND ACTIONS === */}
-                          {isActiveRound && !isCompleted && (
+                          {isActiveRound && !isCompleted && applicationStatus !== "HIRED" && (
                             <>
                               {/* 1. Interview Scheduling Button (if Round 1 cleared / active interview round) */}
                               {canSchedule && (

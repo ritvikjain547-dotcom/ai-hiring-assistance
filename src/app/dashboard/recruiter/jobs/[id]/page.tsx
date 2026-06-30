@@ -368,6 +368,7 @@ export default async function RecruiterJobDetailPage({
                       applicationId={app.id}
                       rounds={app.interviewRounds || []}
                       applicantName={app.applicant.name}
+                      applicationStatus={app.status}
                     />
 
                     <ExpandableProfileDetails app={app} />

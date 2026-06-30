@@ -164,7 +164,7 @@ export function StatusUpdateButton({
           Shortlist
         </button>
       )}
-      {currentStatus !== "REJECTED" && (
+      {currentStatus !== "REJECTED" && currentStatus !== "HIRED" && (
         <button
           onClick={() => handleStatusChange("REJECTED")}
           className="btn btn-danger btn-sm"

@@ -88,8 +88,8 @@ export function OverrideConfirmDialog({
           </button>
         )}
 
-        {/* Always show Reject button unless already rejected */}
-        {currentStatus !== "REJECTED" && (
+        {/* Always show Reject button unless already rejected or hired */}
+        {currentStatus !== "REJECTED" && currentStatus !== "HIRED" && (
           <button
             className="btn btn-sm hitl-btn-reject"
             onClick={() => handleStatusChange("REJECTED")}
