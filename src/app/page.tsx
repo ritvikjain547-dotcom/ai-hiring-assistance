@@ -454,7 +454,7 @@ export default function HomePage() {
             Hire<span className="gradient-text">AI</span>
           </span>
         </div>
-        <p>© 2026 HireAI. All rights reserved. Built with Next.js and AI.</p>
+        <p>© 2026 HireAI. All rights reserved. Built by Ritviz.</p>
       </footer>
     </main>
   );
