@@ -187,16 +187,6 @@ export default async function ApplicantApplicationDetailPage({
           </div>
         )}
 
-        {/* AI Analysis Summary (if available) */}
-        {application.aiOverallSummary && (
-          <div className="app-ai-summary">
-            <div className="app-ai-summary-header">
-              <span>🤖 AI Analysis</span>
-            </div>
-            <p className="app-ai-summary-text">{application.aiOverallSummary}</p>
-          </div>
-        )}
-
         {/* Cover Letter */}
         {application.coverLetter && (
           <div className="app-cover-letter">

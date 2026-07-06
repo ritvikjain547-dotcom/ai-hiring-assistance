@@ -258,16 +258,6 @@ export default async function MyApplicationsPage(props: {
                   </div>
                 )}
 
-                {/* AI Analysis Summary (if available) */}
-                {app.aiOverallSummary && (
-                  <div className="app-ai-summary">
-                    <div className="app-ai-summary-header">
-                      <span>🤖 AI Analysis</span>
-                    </div>
-                    <p className="app-ai-summary-text">{app.aiOverallSummary}</p>
-                  </div>
-                )}
-
                 {/* Cover Letter (collapsed) */}
                 {app.coverLetter && (
                   <div className="app-cover-letter">
