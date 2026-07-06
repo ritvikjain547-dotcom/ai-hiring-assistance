@@ -78,6 +78,8 @@ export async function updateJob(jobId: string, formData: FormData) {
   const status = formData.get("status") as string;
   const deadline = formData.get("deadline") as string;
 
+  const salaryCurrency = formData.get("salaryCurrency") as string;
+
   await prisma.job.update({
     where: { id: jobId, recruiterId: session.user.id },
     data: {
@@ -91,6 +93,7 @@ export async function updateJob(jobId: string, formData: FormData) {
       requiredSkills: requiredSkills || null,
       salaryMin: salaryMin ? parseInt(salaryMin) : null,
       salaryMax: salaryMax ? parseInt(salaryMax) : null,
+      salaryCurrency: salaryCurrency || "USD",
       status: (status as any) || "OPEN",
       deadline: deadline ? new Date(deadline) : null,
     },

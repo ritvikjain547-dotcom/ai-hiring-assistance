@@ -20,6 +20,7 @@ import {
   Filter,
 } from "lucide-react";
 import { DeleteJobButton } from "./DeleteJobButton";
+import { EditJobButton } from "./EditJobButton";
 import { RoundManager } from "./RoundManager";
 import PhotoViewer from "@/components/PhotoViewer";
 import { AiScoreBadge } from "../../applications/AiScoreBadge";
@@ -149,7 +150,23 @@ export default async function RecruiterJobDetailPage({
             >
               {job.status}
             </span>
-            <div style={{ display: "flex", gap: "var(--space-2)" }}>
+            <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+              <EditJobButton job={{
+                id: job.id,
+                title: job.title,
+                company: job.company,
+                description: job.description,
+                location: job.location,
+                locationType: job.locationType,
+                employmentType: job.employmentType,
+                experienceLevel: job.experienceLevel,
+                requiredSkills: job.requiredSkills,
+                salaryMin: job.salaryMin,
+                salaryMax: job.salaryMax,
+                salaryCurrency: (job as any).salaryCurrency || "USD",
+                status: job.status,
+                deadline: job.deadline ? job.deadline.toISOString() : null,
+              }} />
               <Link
                 href={`/dashboard/recruiter/jobs/${id}/preferences`}
                 className="btn btn-secondary btn-sm"
