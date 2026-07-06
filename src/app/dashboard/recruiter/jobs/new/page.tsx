@@ -186,162 +186,32 @@ export default function NewJobPage() {
     );
   }
 
-  // --- Recruiter Type Setup (first-time) ---
+  // --- Recruiter Type Setup — redirect to Companies page ---
   if (setupStep === "choose") {
     return (
       <div className="animate-fade-in">
         <div className="page-header">
-          <h1 className="page-title">Welcome! Let&apos;s set up your profile</h1>
+          <h1 className="page-title">Set up your profile first</h1>
           <p className="page-subtitle">
-            Tell us about your recruiting role so we can customize your experience
+            Before posting a job, please set up your company profile in the Companies page.
           </p>
         </div>
 
-        {error && (
-          <div className="alert alert-error" style={{ marginBottom: "var(--space-5)", maxWidth: "700px" }}>
-            {error}
+        <div className="card" style={{ maxWidth: "600px" }}>
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Building2 size={32} />
+            </div>
+            <div className="empty-state-title">Company profile not configured</div>
+            <div className="empty-state-description">
+              Go to the Companies page to set up your recruiter type and add your companies.
+            </div>
+            <a href="/dashboard/recruiter/companies" className="btn btn-primary">
+              <Building2 size={16} />
+              Go to Companies
+            </a>
           </div>
-        )}
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "var(--space-6)",
-          maxWidth: "700px",
-          marginBottom: "var(--space-6)",
-        }}>
-          {/* Company HR Card */}
-          <button
-            type="button"
-            onClick={() => { setSelectedType("COMPANY_HR"); setError(""); }}
-            style={{
-              padding: "var(--space-6)",
-              background: selectedType === "COMPANY_HR"
-                ? "rgba(99, 102, 241, 0.1)"
-                : "rgba(255, 255, 255, 0.03)",
-              border: selectedType === "COMPANY_HR"
-                ? "2px solid var(--color-primary)"
-                : "1px solid var(--color-border)",
-              borderRadius: "var(--radius-xl)",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all var(--transition-fast)",
-              position: "relative",
-            }}
-          >
-            {selectedType === "COMPANY_HR" && (
-              <div style={{
-                position: "absolute", top: "12px", right: "12px",
-                width: "24px", height: "24px", borderRadius: "50%",
-                background: "var(--color-primary)", display: "flex",
-                alignItems: "center", justifyContent: "center",
-              }}>
-                <Check size={14} color="#fff" />
-              </div>
-            )}
-            <div style={{
-              width: "48px", height: "48px", borderRadius: "var(--radius-lg)",
-              background: "rgba(99, 102, 241, 0.12)", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              marginBottom: "var(--space-4)",
-            }}>
-              <Building2 size={24} color="#818cf8" />
-            </div>
-            <div style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: "var(--space-2)", color: "var(--color-text-primary)" }}>
-              Company HR
-            </div>
-            <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", lineHeight: "1.5" }}>
-              I&apos;m hiring for my own company. My company name will auto-fill on every job I post.
-            </div>
-          </button>
-
-          {/* Recruiting Agency Card */}
-          <button
-            type="button"
-            onClick={() => { setSelectedType("AGENCY"); setError(""); }}
-            style={{
-              padding: "var(--space-6)",
-              background: selectedType === "AGENCY"
-                ? "rgba(56, 189, 248, 0.1)"
-                : "rgba(255, 255, 255, 0.03)",
-              border: selectedType === "AGENCY"
-                ? "2px solid #38bdf8"
-                : "1px solid var(--color-border)",
-              borderRadius: "var(--radius-xl)",
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all var(--transition-fast)",
-              position: "relative",
-            }}
-          >
-            {selectedType === "AGENCY" && (
-              <div style={{
-                position: "absolute", top: "12px", right: "12px",
-                width: "24px", height: "24px", borderRadius: "50%",
-                background: "#38bdf8", display: "flex",
-                alignItems: "center", justifyContent: "center",
-              }}>
-                <Check size={14} color="#fff" />
-              </div>
-            )}
-            <div style={{
-              width: "48px", height: "48px", borderRadius: "var(--radius-lg)",
-              background: "rgba(56, 189, 248, 0.12)", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              marginBottom: "var(--space-4)",
-            }}>
-              <Users size={24} color="#38bdf8" />
-            </div>
-            <div style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: "var(--space-2)", color: "var(--color-text-primary)" }}>
-              Recruiting Agency
-            </div>
-            <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)", lineHeight: "1.5" }}>
-              I recruit for multiple companies. I&apos;ll select or add companies when posting each job.
-            </div>
-          </button>
         </div>
-
-        {/* Company name input for Company HR */}
-        {selectedType === "COMPANY_HR" && (
-          <div className="card" style={{ maxWidth: "700px", marginBottom: "var(--space-5)" }}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="setup-company-name">
-                <Building2 size={14} style={{ display: "inline", marginRight: "6px", verticalAlign: "middle" }} />
-                Your Company Name *
-              </label>
-              <input
-                id="setup-company-name"
-                type="text"
-                className="form-input"
-                placeholder="e.g. Acme Inc."
-                value={companyNameInput}
-                onChange={(e) => setCompanyNameInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSetupSubmit(); } }}
-                autoFocus
-              />
-              <span className="form-helper">
-                This will auto-fill the company field every time you post a new job.
-              </span>
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={handleSetupSubmit}
-          className="btn btn-primary btn-lg"
-          disabled={!selectedType || isPending || (selectedType === "COMPANY_HR" && !companyNameInput.trim())}
-          style={{ maxWidth: "700px" }}
-        >
-          {isPending ? (
-            <>
-              <Loader2 size={18} className="spinner" /> Saving...
-            </>
-          ) : (
-            <>
-              Continue to Post a Job <ArrowRight size={16} />
-            </>
-          )}
-        </button>
       </div>
     );
   }
