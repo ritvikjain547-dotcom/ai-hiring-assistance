@@ -55,9 +55,6 @@ export function PreferenceForm({ jobId, jobSkills, existingPrefs }: PreferenceFo
   const [industryPreference, setIndustryPreference] = useState(
     existingPrefs?.industryPreference || ""
   );
-  const [mustHaveSkills, setMustHaveSkills] = useState(
-    existingPrefs?.mustHaveSkills || jobSkills
-  );
   const [niceToHaveSkills, setNiceToHaveSkills] = useState(
     existingPrefs?.niceToHaveSkills || ""
   );
@@ -83,7 +80,7 @@ export function PreferenceForm({ jobId, jobSkills, existingPrefs }: PreferenceFo
     formData.set("maxExperienceYears", maxExperience);
     formData.set("requiredEducation", requiredEducation);
     formData.set("industryPreference", industryPreference);
-    formData.set("mustHaveSkills", mustHaveSkills);
+    formData.set("mustHaveSkills", jobSkills);
     formData.set("niceToHaveSkills", niceToHaveSkills);
     formData.set("customCriteria", customCriteria);
     formData.set("locationPreference", locationPreference);
@@ -282,18 +279,30 @@ export function PreferenceForm({ jobId, jobSkills, existingPrefs }: PreferenceFo
             </p>
 
             <div className="form-group">
-              <label className="form-label">
-                Must-Have Skills
-                <span style={{ color: "var(--color-accent-danger)", marginLeft: "var(--space-1)" }}>*</span>
-              </label>
-              <textarea
-                className="form-input form-textarea"
-                placeholder="e.g., React, TypeScript, Node.js, PostgreSQL"
-                value={mustHaveSkills}
-                onChange={(e) => setMustHaveSkills(e.target.value)}
-                rows={3}
-              />
-              <span className="form-helper">Comma-separated list of critical skills the candidate must have</span>
+              <label className="form-label">Must-Have Skills</label>
+              <div
+                style={{
+                  padding: "var(--space-3) var(--space-4)",
+                  background: "var(--color-bg-secondary)",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--color-border)",
+                  fontSize: "var(--text-sm)",
+                  color: "var(--color-text-secondary)",
+                  lineHeight: "1.6",
+                }}
+              >
+                {jobSkills
+                  ? jobSkills.split(",").map((s: string, i: number) => (
+                      <span key={i} className="tag" style={{ marginRight: "var(--space-2)", marginBottom: "var(--space-1)" }}>
+                        {s.trim()}
+                      </span>
+                    ))
+                  : <span style={{ fontStyle: "italic" }}>No skills specified in job posting</span>
+                }
+              </div>
+              <span className="form-helper">
+                Auto-populated from the job&apos;s required skills. Edit them in the job details if needed.
+              </span>
             </div>
 
             <div className="form-group" style={{ marginTop: "var(--space-4)" }}>
