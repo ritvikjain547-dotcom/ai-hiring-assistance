@@ -350,10 +350,12 @@ export function RoundManager({ applicationId, rounds, applicantName, application
                           weekday: "short",
                           month: "short",
                           day: "numeric",
+                          timeZone: "Asia/Kolkata",
                         })} at {new Date(round.scheduledDate).toLocaleTimeString("en-US", {
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: true,
+                          timeZone: "Asia/Kolkata",
                         })}
                         {round.interviewLink && (
                           <div style={{ marginTop: "4px" }}>

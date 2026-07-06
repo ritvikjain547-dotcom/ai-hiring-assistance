@@ -444,11 +444,13 @@ export async function sendInterviewScheduledEmail(
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'Asia/Kolkata',
   });
   const formattedTime = scheduledDate.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'Asia/Kolkata',
   });
 
   // Build subject with cleared round context
@@ -532,11 +534,13 @@ export async function sendInterviewRescheduledEmail(
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'Asia/Kolkata',
   });
   const formattedTime = scheduledDate.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'Asia/Kolkata',
   });
 
   const subject = `🔄 Interview Rescheduled: ${roundName} for ${jobTitle} at ${company}`;

@@ -17,6 +17,7 @@ interface Round {
   roundName: string;
   status: string;
   scheduledAt: string | null;
+  scheduledDate: string | null;
   completedAt: string | null;
   feedback: string | null;
   interviewLink?: string | null;
@@ -197,9 +198,30 @@ export function InterviewTimeline({ rounds, currentRound, totalRounds }: Intervi
                   )}
                 </button>
 
-                {/* Scheduled details (Link and Info) */}
-                {round.status === "SCHEDULED" && (round.interviewLink || round.interviewInfo) && (
+                {/* Scheduled details (Date, Time, Link and Info) */}
+                {round.status === "SCHEDULED" && (
                   <div style={{ padding: "var(--space-3)", background: "var(--color-bg-secondary)", borderRadius: "var(--radius-md)", marginTop: "var(--space-2)" }}>
+                    {round.scheduledDate && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: (round.interviewLink || round.interviewInfo) ? "var(--space-2)" : 0, fontSize: "var(--text-sm)", color: "#60a5fa", fontWeight: 500 }}>
+                        <CalendarCheck size={14} />
+                        <span>
+                          {new Date(round.scheduledDate).toLocaleDateString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            timeZone: "Asia/Kolkata",
+                          })}
+                          {" at "}
+                          {new Date(round.scheduledDate).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                            timeZone: "Asia/Kolkata",
+                          })}
+                        </span>
+                      </div>
+                    )}
                     {round.interviewLink && (
                       <div style={{ marginBottom: round.interviewInfo ? "var(--space-2)" : 0 }}>
                         <a href={round.interviewLink} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)", textDecoration: "underline", fontSize: "var(--text-sm)", display: "flex", alignItems: "center", gap: "6px" }}>
