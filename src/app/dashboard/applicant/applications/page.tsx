@@ -14,8 +14,18 @@ import {
   ThumbsDown,
   MessageSquare,
   Briefcase,
+  Filter,
 } from "lucide-react";
 import { InterviewTimeline } from "@/components/InterviewTimeline";
+
+const STATUS_FILTERS = [
+  { value: "", label: "All", icon: <Filter size={14} />, color: "#818cf8" },
+  { value: "PENDING", label: "Pending", icon: <Clock size={14} />, color: "#f59e0b" },
+  { value: "REVIEWING", label: "Under Review", icon: <AlertCircle size={14} />, color: "#60a5fa" },
+  { value: "SHORTLISTED", label: "Shortlisted", icon: <ThumbsUp size={14} />, color: "#34d399" },
+  { value: "REJECTED", label: "Rejected", icon: <XCircle size={14} />, color: "#f87171" },
+  { value: "HIRED", label: "Hired", icon: <CheckCircle2 size={14} />, color: "#34d399" },
+];
 
 function getStatusConfig(status: string) {
   switch (status) {
@@ -54,20 +64,55 @@ export default async function MyApplicationsPage(props: {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div className="page-header">
         <div>
           <h1 className="page-title">
-            My Applications {statusFilter && `- ${statusFilter}`}
+            My Applications
           </h1>
           <p className="page-subtitle">
             Track all your job applications and interview progress in one place
           </p>
         </div>
-        {statusFilter && (
-          <Link href="/dashboard/applicant/applications" className="btn btn-secondary btn-sm">
-            Clear Filter
-          </Link>
-        )}
+      </div>
+
+      {/* Filter Bar */}
+      <div style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "8px",
+        marginBottom: "var(--space-5)",
+        padding: "12px 16px",
+        background: "var(--color-bg-secondary, rgba(255,255,255,0.03))",
+        borderRadius: "12px",
+        border: "1px solid var(--color-border, rgba(255,255,255,0.08))",
+      }}>
+        {STATUS_FILTERS.map((filter) => {
+          const isActive = (statusFilter || "") === filter.value;
+          return (
+            <Link
+              key={filter.value}
+              href={filter.value ? `/dashboard/applicant/applications?status=${filter.value}` : "/dashboard/applicant/applications"}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                borderRadius: "20px",
+                fontSize: "13px",
+                fontWeight: isActive ? 600 : 500,
+                textDecoration: "none",
+                transition: "all 0.2s ease",
+                background: isActive ? `${filter.color}20` : "transparent",
+                color: isActive ? filter.color : "var(--color-text-muted, #9ca3af)",
+                border: isActive ? `1.5px solid ${filter.color}50` : "1.5px solid transparent",
+                cursor: "pointer",
+              }}
+            >
+              {filter.icon}
+              {filter.label}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Stats Overview */}
