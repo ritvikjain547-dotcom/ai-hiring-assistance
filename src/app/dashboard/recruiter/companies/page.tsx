@@ -1,16 +1,19 @@
 'use client';
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect } from "react";
 import {
   getRecruiterSetup,
   addRecruiterCompany,
   deleteRecruiterCompany,
+  renameRecruiterCompany,
 } from "@/actions/recruiterProfile";
 import {
   Building2,
   Plus,
   Trash2,
   Loader2,
+  Pencil,
+  Check,
   X,
   AlertCircle,
   Briefcase,
@@ -30,6 +33,9 @@ export default function CompaniesPage() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -83,6 +89,43 @@ export default function CompaniesPage() {
       );
     }
     setDeletingId(null);
+  }
+
+  function startEditing(company: { id: string; name: string }) {
+    setEditingId(company.id);
+    setEditName(company.name);
+    setError("");
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setEditName("");
+  }
+
+  async function handleRename(companyId: string) {
+    if (!editName.trim()) return;
+    setSaving(true);
+    setError("");
+    const result = await renameRecruiterCompany(companyId, editName.trim());
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setSetup((prev) =>
+        prev
+          ? {
+              ...prev,
+              recruiterCompanies: prev.recruiterCompanies
+                .map((c) =>
+                  c.id === companyId ? { ...c, name: editName.trim() } : c
+                )
+                .sort((a, b) => a.name.localeCompare(b.name)),
+            }
+          : prev
+      );
+      setEditingId(null);
+      setEditName("");
+    }
+    setSaving(false);
   }
 
   if (loading) {
@@ -275,7 +318,7 @@ export default function CompaniesPage() {
             </div>
             <div className="empty-state-title">No companies yet</div>
             <div className="empty-state-description">
-              Add your client companies above. They'll appear in the company
+              Add your client companies above. They&apos;ll appear in the company
               dropdown when you post a new job.
             </div>
           </div>
@@ -297,7 +340,8 @@ export default function CompaniesPage() {
                 borderBottom: "1px solid var(--color-border)",
               }}
             >
-              {companies.length} {companies.length === 1 ? "Company" : "Companies"}
+              {companies.length}{" "}
+              {companies.length === 1 ? "Company" : "Companies"}
             </div>
             {companies.map((company) => (
               <div
@@ -325,32 +369,101 @@ export default function CompaniesPage() {
                 >
                   <Building2 size={16} color="#38bdf8" />
                 </div>
-                <span
-                  style={{
-                    flex: 1,
-                    fontSize: "var(--text-sm)",
-                    fontWeight: 500,
-                    color: "var(--color-text-primary)",
-                  }}
-                >
-                  {company.name}
-                </span>
-                <button
-                  onClick={() => handleDelete(company.id)}
-                  disabled={deletingId === company.id}
-                  className="btn btn-ghost btn-sm"
-                  style={{
-                    color: "var(--color-text-muted)",
-                    padding: "6px",
-                  }}
-                  title="Delete company"
-                >
-                  {deletingId === company.id ? (
-                    <Loader2 size={14} className="spinner" />
-                  ) : (
-                    <Trash2 size={14} />
-                  )}
-                </button>
+
+                {editingId === company.id ? (
+                  /* Editing mode */
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "var(--space-2)",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleRename(company.id);
+                        }
+                        if (e.key === "Escape") cancelEditing();
+                      }}
+                      autoFocus
+                      style={{
+                        flex: 1,
+                        fontSize: "var(--text-sm)",
+                        padding: "6px 10px",
+                        height: "34px",
+                      }}
+                    />
+                    <button
+                      onClick={() => handleRename(company.id)}
+                      className="btn btn-primary btn-sm"
+                      disabled={saving || !editName.trim()}
+                      style={{ padding: "6px 8px", height: "34px" }}
+                      title="Save"
+                    >
+                      {saving ? (
+                        <Loader2 size={14} className="spinner" />
+                      ) : (
+                        <Check size={14} />
+                      )}
+                    </button>
+                    <button
+                      onClick={cancelEditing}
+                      className="btn btn-ghost btn-sm"
+                      style={{ padding: "6px 8px", height: "34px" }}
+                      title="Cancel"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  /* Display mode */
+                  <>
+                    <span
+                      style={{
+                        flex: 1,
+                        fontSize: "var(--text-sm)",
+                        fontWeight: 500,
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      {company.name}
+                    </span>
+                    <button
+                      onClick={() => startEditing(company)}
+                      className="btn btn-ghost btn-sm"
+                      style={{
+                        color: "var(--color-text-muted)",
+                        padding: "6px",
+                      }}
+                      title="Edit company name"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(company.id)}
+                      disabled={deletingId === company.id}
+                      className="btn btn-ghost btn-sm"
+                      style={{
+                        color: "var(--color-text-muted)",
+                        padding: "6px",
+                      }}
+                      title="Delete company"
+                    >
+                      {deletingId === company.id ? (
+                        <Loader2 size={14} className="spinner" />
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
+                    </button>
+                  </>
+                )}
               </div>
             ))}
           </div>

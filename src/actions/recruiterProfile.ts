@@ -115,6 +115,44 @@ export async function deleteRecruiterCompany(companyId: string) {
 }
 
 /**
+ * Rename a client company (for recruiting agencies).
+ */
+export async function renameRecruiterCompany(companyId: string, newName: string) {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== "RECRUITER") {
+    return { error: "Unauthorized" };
+  }
+
+  if (!newName || !newName.trim()) {
+    return { error: "Company name is required" };
+  }
+
+  const company = await prisma.recruiterCompany.findUnique({
+    where: { id: companyId },
+  });
+
+  if (!company || company.recruiterId !== session.user.id) {
+    return { error: "Company not found" };
+  }
+
+  try {
+    await prisma.recruiterCompany.update({
+      where: { id: companyId },
+      data: { name: newName.trim() },
+    });
+
+    revalidatePath("/dashboard/recruiter/jobs/new");
+    revalidatePath("/dashboard/recruiter/companies");
+    return { success: true };
+  } catch (err: any) {
+    if (err?.code === "P2002") {
+      return { error: "A company with this name already exists" };
+    }
+    return { error: "Failed to rename company" };
+  }
+}
+
+/**
  * Get all client companies for agency recruiter.
  */
 export async function getRecruiterCompanies() {

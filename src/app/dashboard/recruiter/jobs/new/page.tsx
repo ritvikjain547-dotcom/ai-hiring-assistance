@@ -367,39 +367,7 @@ export default function NewJobPage() {
           </div>
         )}
 
-        {/* Recruiter Type Badge */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-3)",
-          marginBottom: "var(--space-5)",
-          padding: "var(--space-3) var(--space-4)",
-          background: isAgency ? "rgba(56, 189, 248, 0.06)" : "rgba(99, 102, 241, 0.06)",
-          border: `1px solid ${isAgency ? "rgba(56, 189, 248, 0.15)" : "rgba(99, 102, 241, 0.15)"}`,
-          borderRadius: "var(--radius-lg)",
-        }}>
-          {isAgency ? <Users size={16} color="#38bdf8" /> : <Building2 size={16} color="#818cf8" />}
-          <span style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
-            Posting as: <strong style={{ color: "var(--color-text-primary)" }}>
-              {isAgency ? "Recruiting Agency" : `Company HR — ${recruiterSetup?.companyName}`}
-            </strong>
-          </span>
-          <button
-            type="button"
-            onClick={() => { setSetupStep("choose"); setSelectedType(recruiterSetup?.recruiterType || null); }}
-            style={{
-              marginLeft: "auto",
-              fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
-          >
-            Change
-          </button>
-        </div>
+
 
         <form action={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
           <div className="grid-2">
