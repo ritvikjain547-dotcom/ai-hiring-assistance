@@ -78,6 +78,7 @@ export async function addRecruiterCompany(name: string) {
     });
 
     revalidatePath("/dashboard/recruiter/jobs/new");
+    revalidatePath("/dashboard/recruiter/companies");
     return { success: true, company: { id: company.id, name: company.name } };
   } catch (err: any) {
     if (err?.code === "P2002") {
@@ -85,6 +86,32 @@ export async function addRecruiterCompany(name: string) {
     }
     return { error: "Failed to add company" };
   }
+}
+
+/**
+ * Delete a client company (for recruiting agencies).
+ */
+export async function deleteRecruiterCompany(companyId: string) {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== "RECRUITER") {
+    return { error: "Unauthorized" };
+  }
+
+  const company = await prisma.recruiterCompany.findUnique({
+    where: { id: companyId },
+  });
+
+  if (!company || company.recruiterId !== session.user.id) {
+    return { error: "Company not found" };
+  }
+
+  await prisma.recruiterCompany.delete({
+    where: { id: companyId },
+  });
+
+  revalidatePath("/dashboard/recruiter/jobs/new");
+  revalidatePath("/dashboard/recruiter/companies");
+  return { success: true };
 }
 
 /**
