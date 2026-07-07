@@ -12,22 +12,22 @@ export function AnalyticsCharts({ userGrowthData, jobActivityData }: AnalyticsCh
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
       
       {/* User Growth Chart */}
-      <div className="card" style={{ padding: 'var(--space-6)' }}>
+      <div className="card" style={{ padding: 'var(--space-6)', overflow: 'hidden', minWidth: 0 }}>
         <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>User Growth (Last 7 Days)</h3>
         <div style={{ width: '100%', height: '300px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={userGrowthData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+            <LineChart data={userGrowthData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
               <XAxis dataKey="date" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
                 itemStyle={{ color: 'var(--color-text-primary)' }}
               />
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
-              <Bar dataKey="applicants" name="Applicants" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="recruiters" name="Recruiters" fill="#a855f7" radius={[4, 4, 0, 0]} />
-            </BarChart>
+              <Line type="monotone" dataKey="applicants" name="Applicants" stroke="#3b82f6" strokeWidth={3} dot={{ r: 5, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 7 }} />
+              <Line type="monotone" dataKey="recruiters" name="Recruiters" stroke="#a855f7" strokeWidth={3} dot={{ r: 5, fill: '#a855f7', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 7 }} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
