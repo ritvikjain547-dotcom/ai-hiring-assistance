@@ -202,7 +202,7 @@ export function AnalyticsDashboard({
   }))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', marginTop: 'var(--space-6)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', marginTop: 'var(--space-6)', overflow: 'hidden' }}>
 
       {/* ─── Stat Cards ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
@@ -213,7 +213,7 @@ export function AnalyticsDashboard({
       </div>
 
       {/* ─── Registration Trends (Area Chart) ─── */}
-      <div className="card" style={{ padding: 'var(--space-6)' }}>
+      <div className="card" style={{ padding: 'var(--space-6)', overflow: 'hidden', minWidth: 0 }}>
         <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
           Registration Trend (Last 7 Days)
         </h3>
@@ -243,7 +243,7 @@ export function AnalyticsDashboard({
       </div>
 
       {/* ─── NEW: Cumulative Growth Line Chart ─── */}
-      <div className="card" style={{ padding: 'var(--space-6)' }}>
+      <div className="card" style={{ padding: 'var(--space-6)', overflow: 'hidden', minWidth: 0 }}>
         <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
           Cumulative Growth (Last 7 Days)
         </h3>
@@ -263,7 +263,7 @@ export function AnalyticsDashboard({
       </div>
 
       {/* ─── NEW: Combined Stacked Bar + Line (Composed Chart) ─── */}
-      <div className="card" style={{ padding: 'var(--space-6)' }}>
+      <div className="card" style={{ padding: 'var(--space-6)', overflow: 'hidden', minWidth: 0 }}>
         <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
           Daily Registrations Breakdown
         </h3>
@@ -293,7 +293,7 @@ export function AnalyticsDashboard({
 
       {/* ─── NEW: Radar Chart for Application Status ─── */}
       {radarData.length > 0 && (
-        <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <div className="card" style={{ padding: 'var(--space-6)', overflow: 'hidden', minWidth: 0 }}>
           <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
             Application Status Radar
           </h3>
@@ -312,8 +312,8 @@ export function AnalyticsDashboard({
       )}
 
       {/* ─── Bar Charts: This Week vs Last Week ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-4)' }}>
-        <div className="card" style={{ padding: 'var(--space-5)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-4)', overflow: 'hidden' }}>
+        <div className="card" style={{ padding: 'var(--space-5)', overflow: 'hidden', minWidth: 0 }}>
           <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
             Applicant Registrations (This Week vs Last Week)
           </h3>
@@ -332,7 +332,7 @@ export function AnalyticsDashboard({
           </div>
         </div>
 
-        <div className="card" style={{ padding: 'var(--space-5)' }}>
+        <div className="card" style={{ padding: 'var(--space-5)', overflow: 'hidden', minWidth: 0 }}>
           <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
             Recruiter Registrations (This Week vs Last Week)
           </h3>
