@@ -44,7 +44,7 @@ interface RoundManagerProps {
 }
 
 export function RoundManager({ applicationId, rounds, applicantName, applicationStatus }: RoundManagerProps) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
   const [newRoundName, setNewRoundName] = useState("");
   const [addingRound, setAddingRound] = useState(false);
