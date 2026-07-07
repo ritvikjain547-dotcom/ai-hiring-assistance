@@ -235,7 +235,7 @@ export function RoundManager({ applicationId, rounds, applicantName, application
                       ) : (
                         <div className="round-item-actions">
                           {/* === ACTIVE ROUND ACTIONS === */}
-                          {isActiveRound && !isCompleted && applicationStatus !== "HIRED" && (
+                          {isActiveRound && !isCompleted && (
                             <>
                               {/* 1. Interview Scheduling Button (if Round 1 cleared / active interview round) */}
                               {canSchedule && (
