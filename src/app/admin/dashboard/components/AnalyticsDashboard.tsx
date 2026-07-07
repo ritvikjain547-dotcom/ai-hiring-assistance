@@ -310,47 +310,6 @@ export function AnalyticsDashboard({
           </div>
         </div>
       )}
-
-      {/* ─── Bar Charts: This Week vs Last Week ─── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-        <div className="card" style={{ padding: 'var(--space-5)', overflow: 'hidden', minWidth: 0 }}>
-          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
-            Applicant Registrations (This Week vs Last Week)
-          </h3>
-          <div style={{ width: '100%', height: '280px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={applicantData} margin={{ top: 5, right: 30, bottom: 5, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }} />
-                <Legend wrapperStyle={{ paddingTop: '12px' }} />
-                <Bar dataKey="last7Days" name="This Week" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={20} />
-                <Bar dataKey="last14Days" name="Last Week" fill="#1e3a5f" radius={[6, 6, 0, 0]} barSize={20} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="card" style={{ padding: 'var(--space-5)', overflow: 'hidden', minWidth: 0 }}>
-          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
-            Recruiter Registrations (This Week vs Last Week)
-          </h3>
-          <div style={{ width: '100%', height: '280px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={recruiterData} margin={{ top: 5, right: 30, bottom: 5, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }} />
-                <Legend wrapperStyle={{ paddingTop: '12px' }} />
-                <Bar dataKey="last7Days" name="This Week" fill="#a855f7" radius={[6, 6, 0, 0]} barSize={20} />
-                <Bar dataKey="last14Days" name="Last Week" fill="#3b1f5e" radius={[6, 6, 0, 0]} barSize={20} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
