@@ -312,14 +312,14 @@ export function AnalyticsDashboard({
       )}
 
       {/* ─── Bar Charts: This Week vs Last Week ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-4)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
         <div className="card" style={{ padding: 'var(--space-5)', overflow: 'hidden', minWidth: 0 }}>
           <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
             Applicant Registrations (This Week vs Last Week)
           </h3>
           <div style={{ width: '100%', height: '280px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={applicantData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+              <BarChart data={applicantData} margin={{ top: 5, right: 30, bottom: 5, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
@@ -338,7 +338,7 @@ export function AnalyticsDashboard({
           </h3>
           <div style={{ width: '100%', height: '280px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={recruiterData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+              <BarChart data={recruiterData} margin={{ top: 5, right: 30, bottom: 5, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
