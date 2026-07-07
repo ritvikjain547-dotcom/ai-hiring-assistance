@@ -7,6 +7,11 @@ type ComparisonChartsProps = {
   recruiterData: { dayName: string; last7Days: number; last14Days: number }[]
 }
 
+const tooltipStyle = {
+  contentStyle: { backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' },
+  itemStyle: { color: 'var(--color-text-primary)' },
+}
+
 export function ComparisonCharts({ applicantData, recruiterData }: ComparisonChartsProps) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
@@ -20,11 +25,7 @@ export function ComparisonCharts({ applicantData, recruiterData }: ComparisonCha
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
               <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
               <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
-                itemStyle={{ color: 'var(--color-text-primary)' }}
-                cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-              />
+              <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} />
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
               <Bar dataKey="last7Days" name="Last 7 Days" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               <Bar dataKey="last14Days" name="Last 14 Days" fill="#94a3b8" radius={[4, 4, 0, 0]} />
@@ -42,11 +43,7 @@ export function ComparisonCharts({ applicantData, recruiterData }: ComparisonCha
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
               <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
               <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
-                itemStyle={{ color: 'var(--color-text-primary)' }}
-                cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-              />
+              <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} />
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
               <Bar dataKey="last7Days" name="Last 7 Days" fill="#a855f7" radius={[4, 4, 0, 0]} />
               <Bar dataKey="last14Days" name="Last 14 Days" fill="#94a3b8" radius={[4, 4, 0, 0]} />

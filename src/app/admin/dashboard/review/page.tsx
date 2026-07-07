@@ -28,15 +28,15 @@ export default async function ReviewPage() {
     currentDay.setDate(today.getDate() - i)
     const previousDay = new Date(currentDay)
     previousDay.setDate(currentDay.getDate() - 7)
-    const dayNameStr = currentDay.toLocaleDateString(undefined, { weekday: 'short' })
+    const dayLabel = `Day ${7 - i}`
 
     applicantData.push({
-      dayName: dayNameStr,
+      dayName: dayLabel,
       last7Days: recentUsers.filter(u => u.role === 'APPLICANT' && isSameDate(new Date(u.createdAt), currentDay)).length,
       last14Days: recentUsers.filter(u => u.role === 'APPLICANT' && isSameDate(new Date(u.createdAt), previousDay)).length,
     })
     recruiterData.push({
-      dayName: dayNameStr,
+      dayName: dayLabel,
       last7Days: recentUsers.filter(u => u.role === 'RECRUITER' && isSameDate(new Date(u.createdAt), currentDay)).length,
       last14Days: recentUsers.filter(u => u.role === 'RECRUITER' && isSameDate(new Date(u.createdAt), previousDay)).length,
     })

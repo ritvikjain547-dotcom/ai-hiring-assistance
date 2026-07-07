@@ -2,7 +2,8 @@
 
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area,
+  PieChart, Pie, Cell, AreaChart, Area, LineChart, Line, RadarChart, Radar,
+  PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
 } from 'recharts'
 import { Users, Briefcase, FileText, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 
@@ -156,6 +157,11 @@ function DonutChart({ data, title, centerLabel }: { data: ChartDataItem[]; title
   )
 }
 
+const tooltipStyle = {
+  contentStyle: { backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)', fontSize: '12px' },
+  itemStyle: { color: 'var(--color-text-primary)' },
+}
+
 export function AnalyticsDashboard({
   applicantData,
   recruiterData,
@@ -169,11 +175,30 @@ export function AnalyticsDashboard({
   const applicantChange = getChangePercent(weeklyChanges.applicantsThisWeek, weeklyChanges.applicantsLastWeek)
   const recruiterChange = getChangePercent(weeklyChanges.recruitersThisWeek, weeklyChanges.recruitersLastWeek)
 
-  // Combined registration area chart
+  // Combined registration area chart data
   const combinedData = applicantData.map((d, i) => ({
     day: d.dayName,
     applicants: d.last7Days,
     recruiters: recruiterData[i].last7Days,
+    total: d.last7Days + recruiterData[i].last7Days,
+  }))
+
+  // Cumulative growth line chart data
+  const cumulativeData = applicantData.reduce<{ day: string; applicants: number; recruiters: number }[]>((acc, d, i) => {
+    const prev = acc[i - 1] || { applicants: 0, recruiters: 0 }
+    acc.push({
+      day: d.dayName,
+      applicants: prev.applicants + d.last7Days,
+      recruiters: prev.recruiters + recruiterData[i].last7Days,
+    })
+    return acc
+  }, [])
+
+  // Radar chart data for application status
+  const radarData = appStatusData.map(d => ({
+    subject: d.name,
+    count: d.value,
+    fullMark: Math.max(...appStatusData.map(x => x.value), 1),
   }))
 
   return (
@@ -208,10 +233,7 @@ export function AnalyticsDashboard({
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
               <XAxis dataKey="day" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
               <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-              <Tooltip
-                contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
-                itemStyle={{ color: 'var(--color-text-primary)' }}
-              />
+              <Tooltip {...tooltipStyle} />
               <Legend wrapperStyle={{ paddingTop: '12px' }} />
               <Area type="monotone" dataKey="applicants" name="Applicants" stroke="#3b82f6" strokeWidth={2} fill="url(#gradApplicants)" dot={{ r: 4, fill: '#3b82f6' }} />
               <Area type="monotone" dataKey="recruiters" name="Recruiters" stroke="#a855f7" strokeWidth={2} fill="url(#gradRecruiters)" dot={{ r: 4, fill: '#a855f7' }} />
@@ -220,13 +242,74 @@ export function AnalyticsDashboard({
         </div>
       </div>
 
-      {/* ─── Donut Charts Grid ─── */}
+      {/* ─── NEW: Cumulative Growth Line Chart ─── */}
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
+          Cumulative Growth (Last 7 Days)
+        </h3>
+        <div style={{ width: '100%', height: '280px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={cumulativeData} margin={{ top: 10, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+              <XAxis dataKey="day" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+              <Tooltip {...tooltipStyle} />
+              <Legend wrapperStyle={{ paddingTop: '12px' }} />
+              <Line type="monotone" dataKey="applicants" name="Applicants (Cumulative)" stroke="#3b82f6" strokeWidth={3} dot={{ r: 5, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 7 }} />
+              <Line type="monotone" dataKey="recruiters" name="Recruiters (Cumulative)" stroke="#a855f7" strokeWidth={3} dot={{ r: 5, fill: '#a855f7', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 7 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ─── NEW: Combined Stacked Bar + Line (Composed Chart) ─── */}
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
+          Daily Registrations Breakdown
+        </h3>
+        <div style={{ width: '100%', height: '280px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={combinedData} margin={{ top: 10, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+              <XAxis dataKey="day" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+              <Tooltip {...tooltipStyle} />
+              <Legend wrapperStyle={{ paddingTop: '12px' }} />
+              <Bar dataKey="applicants" name="Applicants" stackId="a" fill="#3b82f6" radius={[0, 0, 0, 0]} barSize={28} />
+              <Bar dataKey="recruiters" name="Recruiters" stackId="a" fill="#a855f7" radius={[6, 6, 0, 0]} barSize={28} />
+              <Line type="monotone" dataKey="total" name="Total" stroke="#10b981" strokeWidth={2.5} dot={{ r: 4, fill: '#10b981' }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ─── Donut Charts + Radar Chart Grid ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-4)' }}>
         <DonutChart data={jobStatusData} title="Job Status Distribution" centerLabel="Jobs" />
         <DonutChart data={appStatusData} title="Application Status" centerLabel="Apps" />
         <DonutChart data={aiClassData} title="AI Classification" centerLabel="Screened" />
         <DonutChart data={locationTypeData} title="Job Location Types" centerLabel="Jobs" />
       </div>
+
+      {/* ─── NEW: Radar Chart for Application Status ─── */}
+      {radarData.length > 0 && (
+        <div className="card" style={{ padding: 'var(--space-6)' }}>
+          <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 'var(--space-4)' }}>
+            Application Status Radar
+          </h3>
+          <div style={{ width: '100%', height: '320px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                <PolarGrid stroke="var(--color-border)" />
+                <PolarAngleAxis dataKey="subject" stroke="var(--color-text-secondary)" fontSize={12} />
+                <PolarRadiusAxis stroke="var(--color-text-muted)" fontSize={10} />
+                <Radar name="Applications" dataKey="count" stroke="#6366f1" fill="#6366f1" fillOpacity={0.25} strokeWidth={2} />
+                <Tooltip {...tooltipStyle} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* ─── Bar Charts: This Week vs Last Week ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--space-4)' }}>
@@ -240,11 +323,7 @@ export function AnalyticsDashboard({
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
-                  itemStyle={{ color: 'var(--color-text-primary)' }}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
-                />
+                <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }} />
                 <Legend wrapperStyle={{ paddingTop: '12px' }} />
                 <Bar dataKey="last7Days" name="This Week" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={20} />
                 <Bar dataKey="last14Days" name="Last Week" fill="#1e3a5f" radius={[6, 6, 0, 0]} barSize={20} />
@@ -263,11 +342,7 @@ export function AnalyticsDashboard({
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="dayName" stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--color-text-secondary)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', borderRadius: 'var(--radius-lg)' }}
-                  itemStyle={{ color: 'var(--color-text-primary)' }}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
-                />
+                <Tooltip {...tooltipStyle} cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }} />
                 <Legend wrapperStyle={{ paddingTop: '12px' }} />
                 <Bar dataKey="last7Days" name="This Week" fill="#a855f7" radius={[6, 6, 0, 0]} barSize={20} />
                 <Bar dataKey="last14Days" name="Last Week" fill="#3b1f5e" radius={[6, 6, 0, 0]} barSize={20} />
