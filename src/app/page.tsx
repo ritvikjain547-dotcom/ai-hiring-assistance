@@ -251,9 +251,6 @@ export default function HomePage() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <Link href="/register" className={styles.empowerCardBtn}>
-                Learn More
-              </Link>
             </div>
           </div>
         </div>
