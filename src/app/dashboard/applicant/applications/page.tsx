@@ -22,9 +22,9 @@ const STATUS_FILTERS = [
   { value: "", label: "All", icon: <Filter size={14} />, color: "#818cf8" },
   { value: "PENDING", label: "Pending", icon: <Clock size={14} />, color: "#f59e0b" },
   { value: "REVIEWING", label: "Under Review", icon: <AlertCircle size={14} />, color: "#60a5fa" },
-  { value: "SHORTLISTED", label: "Shortlisted", icon: <ThumbsUp size={14} />, color: "#34d399" },
+  { value: "SHORTLISTED", label: "Shortlisted", icon: <ThumbsUp size={14} />, color: "#ea580c" },
   { value: "REJECTED", label: "Rejected", icon: <XCircle size={14} />, color: "#f87171" },
-  { value: "HIRED", label: "Hired", icon: <CheckCircle2 size={14} />, color: "#34d399" },
+  { value: "HIRED", label: "Hired", icon: <CheckCircle2 size={14} />, color: "#ea580c" },
 ];
 
 function getStatusConfig(status: string) {
@@ -34,11 +34,11 @@ function getStatusConfig(status: string) {
     case "REVIEWING":
       return { badge: "badge-info", icon: <AlertCircle size={14} />, label: "Under Review", color: "#60a5fa" };
     case "SHORTLISTED":
-      return { badge: "badge-success", icon: <ThumbsUp size={14} />, label: "Shortlisted", color: "#34d399" };
+      return { badge: "badge-success", icon: <ThumbsUp size={14} />, label: "Shortlisted", color: "#ea580c" };
     case "REJECTED":
       return { badge: "badge-danger", icon: <XCircle size={14} />, label: "Rejected", color: "#f87171" };
     case "HIRED":
-      return { badge: "badge-success", icon: <CheckCircle2 size={14} />, label: "Hired! 🎉", color: "#34d399" };
+      return { badge: "badge-success", icon: <CheckCircle2 size={14} />, label: "Hired! 🎉", color: "#ea580c" };
     default:
       return { badge: "badge-neutral", icon: <Clock size={14} />, label: status, color: "#9ca3af" };
   }
@@ -137,7 +137,7 @@ export default async function MyApplicationsPage(props: {
             </div>
           </div>
           <div className="app-stat-card">
-            <div className="app-stat-icon" style={{ background: "rgba(16, 185, 129, 0.12)", color: "#34d399" }}>
+            <div className="app-stat-icon" style={{ background: "rgba(16, 185, 129, 0.12)", color: "#ea580c" }}>
               <CheckCircle2 size={20} />
             </div>
             <div>
@@ -265,7 +265,7 @@ export default async function MyApplicationsPage(props: {
 
                 {app.status === "HIRED" && (
                   <div className="app-decision-card" style={{ background: 'var(--color-bg-hired, rgba(16, 185, 129, 0.1))', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
-                    <div className="app-decision-header" style={{ color: '#059669' }}>
+                    <div className="app-decision-header" style={{ color: '#c2410c' }}>
                       <span>🏆 Congratulations, you have been hired!</span>
                     </div>
                     <p className="app-decision-text" style={{ marginBottom: '16px' }}>
@@ -322,3 +322,4 @@ export default async function MyApplicationsPage(props: {
     </div>
   );
 }
+

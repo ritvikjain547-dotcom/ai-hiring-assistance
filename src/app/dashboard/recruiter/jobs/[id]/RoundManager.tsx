@@ -87,8 +87,8 @@ export function RoundManager({ applicationId, rounds, applicantName, application
       case "PASSED":
         return {
           icon: <CheckCircle2 size={16} />,
-          label: "Shortlisted",
-          color: "#34d399",
+          label: "Cleared",
+          color: "#10b981",
           bg: "rgba(16, 185, 129, 0.12)",
           border: "rgba(16, 185, 129, 0.25)",
         };

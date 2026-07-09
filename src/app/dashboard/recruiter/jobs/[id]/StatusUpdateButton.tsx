@@ -157,7 +157,7 @@ export function StatusUpdateButton({
           style={{
             flex: 1,
             background: "rgba(16, 185, 129, 0.15)",
-            color: "#34d399",
+            color: "#ea580c",
             border: "1px solid rgba(16, 185, 129, 0.2)",
           }}
         >

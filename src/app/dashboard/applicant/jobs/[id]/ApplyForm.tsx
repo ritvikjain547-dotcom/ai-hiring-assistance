@@ -34,7 +34,7 @@ export default function ApplyForm({
   if (applied) {
     return (
       <div style={{ textAlign: "center", padding: "var(--space-4)" }}>
-        <CheckCircle2 size={40} style={{ color: "#059669", margin: "0 auto var(--space-4)" }} />
+        <CheckCircle2 size={40} style={{ color: "#c2410c", margin: "0 auto var(--space-4)" }} />
         <h3 style={{ fontSize: "var(--text-base)", fontWeight: 700, marginBottom: "var(--space-2)" }}>
           Applied Successfully!
         </h3>

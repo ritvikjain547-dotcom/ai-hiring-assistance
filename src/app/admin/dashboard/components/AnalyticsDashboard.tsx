@@ -60,7 +60,7 @@ function StatCard({ icon: Icon, label, value, change, color }: {
           display: 'inline-flex', alignItems: 'center', gap: '4px',
           fontSize: 'var(--text-xs)', fontWeight: 600, padding: '2px 8px', borderRadius: '12px',
           background: change.direction === 'up' ? 'rgba(16, 185, 129, 0.12)' : change.direction === 'down' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(148, 163, 184, 0.12)',
-          color: change.direction === 'up' ? '#10b981' : change.direction === 'down' ? '#ef4444' : '#94a3b8',
+          color: change.direction === 'up' ? '#ea580c' : change.direction === 'down' ? '#ef4444' : '#94a3b8',
         }}>
           {change.direction === 'up' ? <TrendingUp size={12} /> : change.direction === 'down' ? <TrendingDown size={12} /> : <Minus size={12} />}
           {change.value}
@@ -209,7 +209,7 @@ export function AnalyticsDashboard({
         <StatCard icon={Users} label="Total Applicants" value={totals.totalApplicants} change={applicantChange} color="#3b82f6" />
         <StatCard icon={Users} label="Total Recruiters" value={totals.totalRecruiters} change={recruiterChange} color="#a855f7" />
         <StatCard icon={Briefcase} label="Total Jobs" value={totals.totalJobs} change={{ value: '-', direction: 'same' }} color="#f59e0b" />
-        <StatCard icon={FileText} label="Total Applications" value={totals.totalApplications} change={{ value: '-', direction: 'same' }} color="#10b981" />
+        <StatCard icon={FileText} label="Total Applications" value={totals.totalApplications} change={{ value: '-', direction: 'same' }} color="#ea580c" />
       </div>
 
       {/* ─── Registration Trends (Area Chart) ─── */}
@@ -277,7 +277,7 @@ export function AnalyticsDashboard({
               <Legend wrapperStyle={{ paddingTop: '12px' }} />
               <Bar dataKey="applicants" name="Applicants" stackId="a" fill="#3b82f6" radius={[0, 0, 0, 0]} barSize={28} />
               <Bar dataKey="recruiters" name="Recruiters" stackId="a" fill="#a855f7" radius={[6, 6, 0, 0]} barSize={28} />
-              <Line type="monotone" dataKey="total" name="Total" stroke="#10b981" strokeWidth={2.5} dot={{ r: 4, fill: '#10b981' }} />
+              <Line type="monotone" dataKey="total" name="Total" stroke="#ea580c" strokeWidth={2.5} dot={{ r: 4, fill: '#ea580c' }} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -313,3 +313,4 @@ export function AnalyticsDashboard({
     </div>
   )
 }
+

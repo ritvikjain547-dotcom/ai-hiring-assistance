@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { registerUser } from "@/actions/auth";
 import { Mail, Lock, User, ArrowRight, Loader2, Briefcase, UserCheck, Orbit } from "lucide-react";
@@ -86,7 +87,7 @@ function RegisterForm() {
                   className="role-option-icon"
                   style={{
                     background: "rgba(16, 185, 129, 0.12)",
-                    color: "#34d399",
+                    color: "#ea580c",
                   }}
                 >
                   <UserCheck size={20} />
@@ -283,7 +284,7 @@ function RegisterForm() {
         </div>
 
         <div className="auth-footer">
-          Already have an account? <Link href="/login">Sign in</Link>
+          Already have an account? <Link href="/login-new">Sign in</Link>
         </div>
       </div>
     </div>
@@ -303,3 +304,4 @@ export default function RegisterPage() {
     </Suspense>
   );
 }
+

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Brain,
   LayoutDashboard,
@@ -16,6 +17,7 @@ import {
   MessageSquare,
   Building2,
 } from "lucide-react";
+import { AnimatedQuote } from "@/components/AnimatedQuote";
 
 export default async function DashboardLayout({
   children,
@@ -99,15 +101,17 @@ export default async function DashboardLayout({
       {/* Top Bar */}
       <div className="dashboard-topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
-          <Link href="/" className="navbar-logo" style={{ color: "white" }}>
+          <Link href="/" className="navbar-logo" style={{ color: "var(--color-text-primary)" }}>
             <div className="navbar-logo-icon">
               <Orbit size={18} style={{ animation: "spin 12s linear infinite" }} />
             </div>
             <span>
-              Hire<span style={{ color: "#38bdf8" }}>AI</span>
+              Hire<span style={{ color: "#ea580c" }}>AI</span>
             </span>
           </Link>
         </div>
+
+        <AnimatedQuote />
 
         <div className="dashboard-topbar-right">
           <div
@@ -125,7 +129,7 @@ export default async function DashboardLayout({
             <div className="avatar avatar-sm" style={{ overflow: "hidden" }}>
               {session.user.name?.charAt(0).toUpperCase() || "U"}
             </div>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--color-text-primary)" }}>
               {session.user.name}
             </span>
           </div>
@@ -135,7 +139,7 @@ export default async function DashboardLayout({
               await signOut({ redirectTo: "/" });
             }}
           >
-            <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn" style={{ color: "white" }}>
+            <button type="submit" className="btn btn-ghost btn-sm" id="logout-btn" style={{ color: "var(--color-text-primary)" }}>
               <LogOut size={16} />
               Sign Out
             </button>

@@ -7,45 +7,45 @@
 
 :root {
   /* === Color Palette === */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-tertiary: #f3f4f6;
+  --color-bg-primary: #f4f4f5;
+  --color-bg-secondary: #e4e4e7;
+  --color-bg-tertiary: #d4d4d8;
   --color-bg-card: #ffffff;
-  --color-bg-card-hover: #ffffff;
+  --color-bg-card-hover: #fafafa;
   --color-bg-elevated: #ffffff;
   --color-bg-input: #ffffff;
   --color-bg-glass: rgba(255, 255, 255, 0.7);
 
   /* Accent Gradient Colors */
-  --color-accent-primary: #18181b;
-  --color-accent-secondary: #27272a;
-  --color-accent-tertiary: #0284c7;
-  --color-accent-warm: #d97706;
-  --color-accent-success: #059669;
-  --color-accent-danger: #dc2626;
-  --color-accent-info: #2563eb;
+  --color-accent-primary: #ea580c;
+  --color-accent-secondary: #c2410c;
+  --color-accent-tertiary: #52525b;
+  --color-accent-warm: #ea580c;
+  --color-accent-success: #18181b;
+  --color-accent-danger: #71717a;
+  --color-accent-info: #3f3f46;
 
   /* Gradient */
-  --gradient-primary: linear-gradient(135deg, #18181b 0%, #27272a 100%);
-  --gradient-accent: linear-gradient(135deg, #18181b 0%, #3f3f46 100%);
-  --gradient-warm: linear-gradient(135deg, #d97706 0%, #dc2626 100%);
-  --gradient-success: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  --gradient-primary: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  --gradient-accent: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  --gradient-warm: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  --gradient-success: linear-gradient(135deg, #27272a 0%, #3f3f46 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
-  --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(24, 24, 27, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
-  --gradient-glow: radial-gradient(circle, rgba(24, 24, 27, 0.02) 0%, transparent 70%);
+  --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  --gradient-glow: radial-gradient(circle, rgba(234, 88, 12, 0.02) 0%, transparent 70%);
 
   /* Text Colors */
   --color-text-primary: #09090b;
   --color-text-secondary: #52525b;
   --color-text-tertiary: #71717a;
   --color-text-muted: #a1a1aa;
-  --color-text-accent: #18181b;
+  --color-text-accent: #ea580c;
 
   /* Border Colors */
   --color-border: #e4e4e7;
   --color-border-hover: #d4d4d8;
-  --color-border-accent: #a1a1aa;
-  --color-border-focus: #18181b;
+  --color-border-accent: #ea580c;
+  --color-border-focus: #ea580c;
 
   /* === Typography === */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -384,7 +384,7 @@ input, textarea, select {
   height: 400px;
   top: 40%;
   left: 10%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(234, 88, 12, 0.2) 0%, transparent 70%);
   filter: blur(60px);
   animation: blob-morph-2 30s ease-in-out infinite reverse;
   animation-delay: -8s;
@@ -457,15 +457,16 @@ input, textarea, select {
 }
 
 .btn-primary {
-  background: var(--color-accent-primary);
+  background: #ea580c;
   color: white;
   border: none;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px 0 rgba(234, 88, 12, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-accent-secondary);
+  background: #c2410c;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -642,39 +643,39 @@ input, textarea, select {
 }
 
 .badge-primary {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: #ea580c;
+  color: #ffffff;
+  border: 1px solid #ea580c;
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: #18181b;
+  color: #ffffff;
+  border: 1px solid #18181b;
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: #f3f4f6;
+  color: #18181b;
+  border: 1px solid #d4d4d8;
 }
 
 .badge-danger {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: #71717a;
+  color: #ffffff;
+  border: 1px solid #71717a;
 }
 
 .badge-info {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: #3f3f46;
+  color: #ffffff;
+  border: 1px solid #3f3f46;
 }
 
 .badge-neutral {
-  background: rgba(148, 163, 184, 0.1);
-  color: var(--color-text-secondary);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: #f4f4f5;
+  color: #52525b;
+  border: 1px solid #e4e4e7;
 }
 
 /* ============================================
@@ -750,10 +751,10 @@ input, textarea, select {
   border-color: var(--color-border-hover);
 }
 
-.stat-card.purple::after { background: #6366f1; }
-.stat-card.cyan::after { background: #06b6d4; }
-.stat-card.amber::after { background: #f59e0b; }
-.stat-card.emerald::after { background: #10b981; }
+.stat-card.purple::after { background: #18181b; }
+.stat-card.cyan::after { background: #3f3f46; }
+.stat-card.amber::after { background: #52525b; }
+.stat-card.emerald::after { background: #71717a; }
 
 .stat-icon {
   width: 48px;
@@ -766,23 +767,23 @@ input, textarea, select {
 }
 
 .stat-icon.purple {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
 }
 
 .stat-icon.cyan {
-  background: rgba(6, 182, 212, 0.15);
-  color: #22d3ee;
+  background: #f4f4f5;
+  color: #18181b;
 }
 
 .stat-icon.amber {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  background: rgba(234, 88, 12, 0.06);
+  color: #c2410c;
 }
 
 .stat-icon.emerald {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: #e4e4e7;
+  color: #27272a;
 }
 
 .stat-value {
@@ -994,7 +995,7 @@ input, textarea, select {
   left: 0;
   right: 0;
   height: var(--topbar-height);
-  background: rgba(10, 10, 15, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border);
   display: flex;
@@ -1283,9 +1284,9 @@ input, textarea, select {
 }
 
 .alert-success {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
+  background: rgba(234, 88, 12, 0.1);
+  border: 1px solid rgba(234, 88, 12, 0.2);
+  color: #f97316;
 }
 
 .alert-warning {
@@ -2670,9 +2671,9 @@ details summary::-webkit-details-marker {
 
 /* AI Classification Badges */
 .ai-badge-matching {
-  background: rgba(16, 185, 129, 0.12) !important;
-  color: #10b981 !important;
-  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  background: rgba(234, 88, 12, 0.12) !important;
+  color: #ea580c !important;
+  border: 1px solid rgba(234, 88, 12, 0.2) !important;
 }
 
 .ai-badge-near {
@@ -2843,9 +2844,9 @@ details summary::-webkit-details-marker {
 }
 
 .ai-skill-tag.match {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  background: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
+  border: 1px solid rgba(234, 88, 12, 0.15);
 }
 
 .ai-skill-tag.gap {
@@ -2887,9 +2888,9 @@ details summary::-webkit-details-marker {
 }
 
 .ai-class-stat.matching {
-  background: rgba(16, 185, 129, 0.08);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  background: rgba(234, 88, 12, 0.08);
+  color: #ea580c;
+  border: 1px solid rgba(234, 88, 12, 0.15);
 }
 
 .ai-class-stat.near {
@@ -2990,7 +2991,7 @@ details summary::-webkit-details-marker {
 }
 
 .pref-step.completed {
-  color: #10b981;
+  color: #ea580c;
 }
 
 .pref-step-icon {
@@ -3009,8 +3010,8 @@ details summary::-webkit-details-marker {
 }
 
 .pref-step.completed .pref-step-icon {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
 }
 
 .pref-step-label {
@@ -3195,17 +3196,17 @@ details summary::-webkit-details-marker {
    ============================================ */
 
 .hitl-btn-accept {
-  background: rgba(16, 185, 129, 0.1) !important;
-  color: #10b981 !important;
-  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  background: rgba(234, 88, 12, 0.1) !important;
+  color: #ea580c !important;
+  border: 1px solid rgba(234, 88, 12, 0.25) !important;
   font-weight: 600 !important;
 }
 
 .hitl-btn-accept:hover:not(:disabled) {
-  background: rgba(16, 185, 129, 0.2) !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
+  background: rgba(234, 88, 12, 0.2) !important;
+  border-color: rgba(234, 88, 12, 0.4) !important;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15);
 }
 
 .hitl-btn-reject {
@@ -3382,8 +3383,8 @@ details summary::-webkit-details-marker {
 }
 
 .app-decision-hired {
-  background: rgba(16, 185, 129, 0.04);
-  border-color: rgba(16, 185, 129, 0.15);
+  background: rgba(234, 88, 12, 0.04);
+  border-color: rgba(234, 88, 12, 0.15);
 }
 
 .app-decision-header {
@@ -3400,7 +3401,7 @@ details summary::-webkit-details-marker {
 }
 
 .app-decision-hired .app-decision-header {
-  color: #34d399;
+  color: #ea580c;
 }
 
 .app-decision-text {
@@ -3556,7 +3557,7 @@ details summary::-webkit-details-marker {
   font-weight: 500;
 }
 
-.timeline-stat-passed { color: #34d399; }
+.timeline-stat-passed { color: #ea580c; }
 .timeline-stat-scheduled { color: #60a5fa; }
 .timeline-stat-failed { color: #f87171; }
 
@@ -3576,7 +3577,7 @@ details summary::-webkit-details-marker {
   left: 0;
   top: 0;
   height: 100%;
-  background: linear-gradient(90deg, #34d399, #6ee7b7);
+  background: linear-gradient(90deg, #ea580c, #f97316);
   border-radius: var(--radius-full);
   transition: width 0.5s ease;
   box-shadow: 0 0 8px rgba(52, 211, 153, 0.3);
@@ -3736,8 +3737,8 @@ details summary::-webkit-details-marker {
 }
 
 .review-modal-icon.selected {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34d399;
+  background: rgba(234, 88, 12, 0.12);
+  color: #ea580c;
 }
 
 .review-modal-icon.rejected {
@@ -4043,7 +4044,7 @@ details summary::-webkit-details-marker {
 }
 
 .round-dot.passed {
-  background: #34d399;
+  background: #ea580c;
   box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
 }
 
@@ -4063,7 +4064,7 @@ details summary::-webkit-details-marker {
 
 .round-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #34d399, #6ee7b7);
+  background: linear-gradient(90deg, #ea580c, #f97316);
   border-radius: 2px;
   transition: width 0.5s ease;
 }
@@ -4172,14 +4173,14 @@ details summary::-webkit-details-marker {
 }
 
 .round-action-btn.selected {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: rgba(234, 88, 12, 0.15);
+  color: #ea580c;
 }
 
 .round-action-btn.selected:hover {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(234, 88, 12, 0.25);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15);
 }
 
 .round-action-btn.rejected {
@@ -4535,10 +4536,10 @@ details summary::-webkit-details-marker {
   border-color: var(--color-border-hover);
 }
 
-.stat-card.purple::after { background: #6366f1; }
-.stat-card.cyan::after { background: #06b6d4; }
-.stat-card.amber::after { background: #f59e0b; }
-.stat-card.emerald::after { background: #10b981; }
+.stat-card.purple::after { background: #ea580c; }
+.stat-card.cyan::after { background: #3f3f46; }
+.stat-card.amber::after { background: #ea580c; }
+.stat-card.emerald::after { background: #71717a; }
 
 .stat-icon {
   width: 48px;
@@ -4551,23 +4552,23 @@ details summary::-webkit-details-marker {
 }
 
 .stat-icon.purple {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
 }
 
 .stat-icon.cyan {
-  background: rgba(6, 182, 212, 0.15);
-  color: #22d3ee;
+  background: #f4f4f5;
+  color: #18181b;
 }
 
 .stat-icon.amber {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  background: rgba(234, 88, 12, 0.06);
+  color: #c2410c;
 }
 
 .stat-icon.emerald {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: #e4e4e7;
+  color: #27272a;
 }
 
 .stat-value {

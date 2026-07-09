@@ -488,7 +488,7 @@ export default async function RecruiterJobDetailPage({
                           alignItems: "center",
                           gap: "var(--space-2)"
                         }}>
-                          <CheckCircle2 size={16} color="#10b981" />
+                          <CheckCircle2 size={16} color="#ea580c" />
                           Hired Candidates (Cleared All Rounds) ({groups.HIRED.length})
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>

@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Users, Building2, Briefcase, History, BarChart3, LogOut, Orbit, MessageSquare } from 'lucide-react'
 import { logout } from '@/actions/admin'
+import { AnimatedQuote } from "@/components/AnimatedQuote";
 
 export default function AdminDashboardLayout({
   children,
@@ -27,24 +29,26 @@ export default function AdminDashboardLayout({
       {/* Top Bar */}
       <div className="dashboard-topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
-          <Link href="/admin/dashboard" className="navbar-logo" style={{ color: "white" }}>
+          <Link href="/admin/dashboard" className="navbar-logo" style={{ color: "var(--color-text-primary)" }}>
             <div className="navbar-logo-icon">
               <Orbit size={18} style={{ animation: "spin 12s linear infinite" }} />
             </div>
             <span>
-              Hire<span style={{ color: "#38bdf8" }}>AI</span> Admin
+              Hire<span style={{ color: "#ea580c" }}>AI</span> Admin
             </span>
           </Link>
         </div>
+
+        <AnimatedQuote />
 
         <div className="dashboard-topbar-right">
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
             <span className="badge badge-primary">ADMIN</span>
             <div className="avatar avatar-sm">A</div>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "white" }}>Administrator</span>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--color-text-primary)" }}>Administrator</span>
           </div>
           <form action={logout}>
-            <button type="submit" className="btn btn-ghost btn-sm">
+            <button type="submit" className="btn btn-ghost btn-sm" style={{ color: "var(--color-text-primary)" }}>
               <LogOut size={16} />
               Sign Out
             </button>

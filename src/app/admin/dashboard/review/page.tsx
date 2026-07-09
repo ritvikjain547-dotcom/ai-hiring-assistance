@@ -54,7 +54,7 @@ export default async function ReviewPage() {
   const draftJobs = await prisma.job.count({ where: { status: 'DRAFT' } })
 
   const jobStatusData = [
-    { name: 'Open', value: openJobs, color: '#10b981' },
+    { name: 'Open', value: openJobs, color: '#ea580c' },
     { name: 'Closed', value: closedJobs, color: '#ef4444' },
     { name: 'Draft', value: draftJobs, color: '#94a3b8' },
   ].filter(d => d.value > 0)
@@ -70,7 +70,7 @@ export default async function ReviewPage() {
     { name: 'Pending', value: pendingApps, color: '#f59e0b' },
     { name: 'Reviewing', value: reviewingApps, color: '#3b82f6' },
     { name: 'Shortlisted', value: shortlistedApps, color: '#8b5cf6' },
-    { name: 'Hired', value: hiredApps, color: '#10b981' },
+    { name: 'Hired', value: hiredApps, color: '#ea580c' },
     { name: 'Rejected', value: rejectedApps, color: '#ef4444' },
   ].filter(d => d.value > 0)
 
@@ -81,7 +81,7 @@ export default async function ReviewPage() {
   const pendingReviewApps = await prisma.application.count({ where: { aiClassification: 'PENDING_REVIEW' } })
 
   const aiClassData = [
-    { name: 'Matching', value: matchingApps, color: '#10b981' },
+    { name: 'Matching', value: matchingApps, color: '#ea580c' },
     { name: 'Near Bound', value: nearBoundApps, color: '#f59e0b' },
     { name: 'Not Matching', value: notMatchingApps, color: '#ef4444' },
     { name: 'Pending Review', value: pendingReviewApps, color: '#94a3b8' },
@@ -138,3 +138,4 @@ export default async function ReviewPage() {
     </div>
   )
 }
+

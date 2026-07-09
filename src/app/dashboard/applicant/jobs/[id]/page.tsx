@@ -168,7 +168,7 @@ export default async function ApplicantJobDetailPage({
           <div className="job-info-card">
             {alreadyApplied ? (
               <div style={{ textAlign: "center", padding: "var(--space-4)" }}>
-                <CheckCircle2 size={40} style={{ color: "#34d399", margin: "0 auto var(--space-4)" }} />
+                <CheckCircle2 size={40} style={{ color: "#ea580c", margin: "0 auto var(--space-4)" }} />
                 <h3 style={{ fontSize: "var(--text-base)", fontWeight: 700, marginBottom: "var(--space-2)" }}>
                   Application Submitted
                 </h3>

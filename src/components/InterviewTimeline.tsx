@@ -46,10 +46,10 @@ export function InterviewTimeline({ rounds, currentRound, totalRounds }: Intervi
         return {
           icon: <CheckCircle2 size={16} />,
           label: "Cleared",
-          color: "#34d399",
-          bg: "rgba(16, 185, 129, 0.12)",
-          border: "rgba(16, 185, 129, 0.25)",
-          glow: "0 0 12px rgba(16, 185, 129, 0.2)",
+          color: "#ea580c",
+          bg: "rgba(234, 88, 12, 0.12)",
+          border: "rgba(234, 88, 12, 0.25)",
+          glow: "0 0 12px rgba(234, 88, 12, 0.2)",
         };
       case "FAILED":
         return {
@@ -125,7 +125,7 @@ export function InterviewTimeline({ rounds, currentRound, totalRounds }: Intervi
             className="interview-progress-dot"
             style={{
               left: `${((i + 1) / rounds.length) * 100}%`,
-              background: i < passedCount ? "#34d399" : "rgba(156, 163, 175, 0.3)",
+              background: i < passedCount ? "#ea580c" : "rgba(156, 163, 175, 0.3)",
             }}
           />
         ))}
@@ -146,7 +146,7 @@ export function InterviewTimeline({ rounds, currentRound, totalRounds }: Intervi
                   className="timeline-connector"
                   style={{
                     background: round.status === "PASSED"
-                      ? "linear-gradient(to bottom, #34d399, rgba(156, 163, 175, 0.15))"
+                      ? "linear-gradient(to bottom, #ea580c, rgba(156, 163, 175, 0.15))"
                       : "rgba(156, 163, 175, 0.12)",
                   }}
                 />

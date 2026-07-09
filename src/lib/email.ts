@@ -139,7 +139,7 @@ const getEmailWrapper = (title: string, content: string) => `
     .badge-welcome { background-color: #e0e7ff; color: #4338ca; }
     .badge-applied { background-color: #e0f2fe; color: #0369a1; }
     .badge-reviewing { background-color: #fef3c7; color: #d97706; }
-    .badge-shortlisted { background-color: #dcfce7; color: #15803d; }
+    .badge-shortlisted { background-color: #fff7ed; color: #9a3412; }
     .badge-rejected { background-color: #fee2e2; color: #b91c1c; }
     .badge-hired { background-color: #fae8ff; color: #86198f; }
   </style>
@@ -363,7 +363,7 @@ export async function sendAiDecisionEmail(
       bodyContent = `
         <p>We're excited to share that after our AI-powered initial screening, your profile has been identified as a <strong>strong match</strong> for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>!</p>
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <strong style="color: #15803d;">AI Assessment:</strong>
+          <strong style="color: #9a3412;">AI Assessment:</strong>
           <p style="color: #166534; margin: 8px 0 0;">${aiSummary}</p>
         </div>
         <p>Our recruitment team will review your application next and reach out to schedule the next steps. Please keep an eye on your dashboard for updates.</p>
@@ -460,9 +460,9 @@ export async function sendInterviewScheduledEmail(
 
   // Build cleared round banner
   const clearedRoundSection = clearedRound ? `
-    <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin: 0 0 24px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #f0fdf4, #fff7ed); border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin: 0 0 24px; text-align: center;">
       <div style="font-size: 28px; margin-bottom: 6px;">🎉✅🏅</div>
-      <div style="font-size: 16px; font-weight: 700; color: #15803d;">
+      <div style="font-size: 16px; font-weight: 700; color: #9a3412;">
         ${clearedRound.roundName} (Round ${clearedRound.roundNumber}) — Cleared!
       </div>
       <div style="font-size: 13px; color: #166534; margin-top: 6px;">
@@ -717,3 +717,4 @@ export async function sendFinalOfferEmail(
 
   return sendEmail({ to: email, subject, html, attachments });
 }
+

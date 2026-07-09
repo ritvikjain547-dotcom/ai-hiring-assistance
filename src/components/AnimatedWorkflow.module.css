@@ -1,0 +1,382 @@
+/* =============================================
+   ANIMATED WORKFLOW — Premium Dark Section
+   ============================================= */
+
+.section {
+  position: relative;
+  background: #0c0a09;
+  padding: 120px 40px;
+  overflow: hidden;
+}
+
+/* ---------- Floating Particles ---------- */
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  bottom: -10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(252, 121, 51, 0.3);
+  animation: float linear infinite;
+}
+
+.particle:nth-child(odd) {
+  background: rgba(139, 92, 246, 0.25);
+}
+
+.particle:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  background: rgba(6, 182, 212, 0.25);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(-10vh) scale(1);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-105vh) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ---------- Inner Container ---------- */
+.inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+.header {
+  text-align: center;
+  margin-bottom: 90px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.headerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 20px;
+  border: 1px solid rgba(252, 121, 51, 0.4);
+  border-radius: 50px;
+  color: #fc7933;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 24px;
+}
+
+.heading {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(32px, 4.5vw, 52px);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.headingLight {
+  font-weight: 400;
+  font-style: italic;
+  color: #a8a29e;
+}
+
+.headingBold {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.subheading {
+  color: #78716c;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+/* ---------- Track / Grid ---------- */
+.track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+}
+
+/* ---------- Connecting Line ---------- */
+.connectorLine {
+  position: absolute;
+  top: 52px;
+  left: 52px;
+  right: 52px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.connectorFill {
+  height: 100%;
+  background: linear-gradient(90deg, #fc7933, #8b5cf6, #06b6d4, #22c55e, #e11d48);
+  border-radius: 3px;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 20px rgba(252, 121, 51, 0.4);
+}
+
+/* ---------- Step ---------- */
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stepActive {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ---------- Icon Area ---------- */
+.iconArea {
+  position: relative;
+  width: 105px;
+  height: 105px;
+  margin-bottom: 28px;
+}
+
+.iconGlow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(20px);
+  transition: opacity 0.6s ease;
+}
+
+.stepActive .iconGlow {
+  opacity: 0.3;
+}
+
+.iconRing {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  transition: all 0.5s ease;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.iconRingFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.stepActive .iconRingFill {
+  opacity: 1;
+}
+
+.stepActive .iconRing {
+  border-color: transparent;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.icon {
+  width: 34px;
+  height: 34px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.5s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.stepActive .icon {
+  color: #ffffff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Hover bounce */
+.step:hover .iconRing {
+  transform: translateY(-6px);
+}
+
+.step:hover .iconGlow {
+  opacity: 0.5 !important;
+}
+
+/* ---------- Pulse Rings ---------- */
+.pulse,
+.pulse2 {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid;
+  opacity: 0;
+  z-index: 1;
+  animation: pulseRing 2.5s ease-out infinite;
+  pointer-events: none;
+}
+
+.pulse2 {
+  animation-delay: 1.25s;
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ---------- Step Number ---------- */
+.stepNum {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.2);
+  margin-bottom: 12px;
+  transition: color 0.5s ease;
+}
+
+/* ---------- Step Title ---------- */
+.stepTitle {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 20px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+
+.stepActive .stepTitle {
+  opacity: 1;
+}
+
+/* ---------- Step Description ---------- */
+.stepDesc {
+  color: #78716c;
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: 230px;
+  transition: color 0.5s ease;
+}
+
+.stepActive .stepDesc {
+  color: #a8a29e;
+}
+
+/* ---------- Arrow ---------- */
+.arrow {
+  position: absolute;
+  right: -32px;
+  top: 40px;
+  color: rgba(255, 255, 255, 0.1);
+  transition: all 0.5s ease;
+  z-index: 3;
+}
+
+.arrowActive {
+  color: #fc7933;
+}
+
+.arrowActive svg path:first-child {
+  animation: dashMove 1.5s linear infinite;
+}
+
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 992px) {
+  .section {
+    padding: 80px 24px;
+  }
+
+  .track {
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+  }
+
+  .connectorLine {
+    display: none;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .step {
+    max-width: 340px;
+  }
+
+  .header {
+    margin-bottom: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 60px 16px;
+  }
+
+  .iconArea {
+    width: 80px;
+    height: 80px;
+  }
+
+  .icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .stepTitle {
+    font-size: 18px;
+  }
+}

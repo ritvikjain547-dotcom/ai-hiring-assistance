@@ -25,11 +25,11 @@ function getStatusConfig(status: string) {
     case "REVIEWING":
       return { badge: "badge-info", icon: <AlertCircle size={14} />, label: "Under Review", color: "#60a5fa" };
     case "SHORTLISTED":
-      return { badge: "badge-success", icon: <ThumbsUp size={14} />, label: "Shortlisted", color: "#34d399" };
+      return { badge: "badge-success", icon: <ThumbsUp size={14} />, label: "Shortlisted", color: "#ea580c" };
     case "REJECTED":
       return { badge: "badge-danger", icon: <XCircle size={14} />, label: "Rejected", color: "#f87171" };
     case "HIRED":
-      return { badge: "badge-success", icon: <CheckCircle2 size={14} />, label: "Hired! 🎉", color: "#34d399" };
+      return { badge: "badge-success", icon: <CheckCircle2 size={14} />, label: "Hired! 🎉", color: "#ea580c" };
     default:
       return { badge: "badge-neutral", icon: <Clock size={14} />, label: status, color: "#9ca3af" };
   }
@@ -148,7 +148,7 @@ export default async function ApplicantApplicationDetailPage({
 
         {application.status === "HIRED" && (
           <div className="app-decision-card" style={{ background: 'var(--color-bg-hired, rgba(16, 185, 129, 0.1))', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
-            <div className="app-decision-header" style={{ color: '#059669' }}>
+            <div className="app-decision-header" style={{ color: '#c2410c' }}>
               <Trophy size={14} />
               <span>Congratulations, you have been hired!</span>
             </div>

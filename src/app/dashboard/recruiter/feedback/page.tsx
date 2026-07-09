@@ -95,7 +95,7 @@ export default function FeedbackPage() {
         .rating-emoji-btn.active-1 { color: #ef4444; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.2); }
         .rating-emoji-btn.active-2 { color: #f97316; background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.2); }
         .rating-emoji-btn.active-3 { color: #eab308; background: rgba(234, 179, 8, 0.08); border-color: rgba(234, 179, 8, 0.2); }
-        .rating-emoji-btn.active-4 { color: #22c55e; background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.2); }
+        .rating-emoji-btn.active-4 { color: #f97316; background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.2); }
         .rating-emoji-btn.active-5 { color: #ec4899; background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.2); }
         
         .rating-number-btn {
@@ -301,3 +301,4 @@ export default function FeedbackPage() {
     </div>
   );
 }
+

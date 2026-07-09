@@ -151,7 +151,7 @@ export function PreferenceForm({ jobId, jobSkills, existingPrefs }: PreferenceFo
                   icon: Zap,
                   title: "Flexible",
                   desc: "Lenient scoring. Values potential, eagerness to learn, and adjacent skills.",
-                  color: "#10b981",
+                  color: "#ea580c",
                 },
               ].map((style) => (
                 <div

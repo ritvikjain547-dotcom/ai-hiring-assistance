@@ -70,3 +70,4 @@ export function AiScoreBadge({ score, classification, size = 'md' }: AiScoreBadg
     </div>
   );
 }
+
